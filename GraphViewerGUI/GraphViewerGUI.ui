@@ -34,7 +34,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
-     <widget class="QScrollArea" name="scrollArea">
+     <widget class="QScrollArea" name="graphScrollArea">
       <property name="sizeAdjustPolicy">
        <enum>QAbstractScrollArea::AdjustIgnored</enum>
       </property>
@@ -53,19 +53,6 @@
          <height>484</height>
         </rect>
        </property>
-       <widget class="QPushButton" name="pushButton">
-        <property name="geometry">
-         <rect>
-          <x>290</x>
-          <y>180</y>
-          <width>75</width>
-          <height>23</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>PushButton</string>
-        </property>
-       </widget>
       </widget>
      </widget>
     </item>
@@ -88,7 +75,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="zoomLabel">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -107,7 +94,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBox">
+       <widget class="QDoubleSpinBox" name="zoomDoubleSpinBox">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -123,7 +110,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="horizontalSlider">
+       <widget class="QSlider" name="zoomHSlider">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -177,7 +164,7 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="dockWidget_2">
+  <widget class="QDockWidget" name="graphDockWidget">
    <property name="minimumSize">
     <size>
      <width>230</width>
@@ -221,7 +208,7 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_3">
-    <widget class="QListView" name="listView">
+    <widget class="QListView" name="graphsListView">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -231,7 +218,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit">
+    <widget class="QLineEdit" name="graphNamelineEdit">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -244,7 +231,7 @@
       <string>Name</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="graphsListsLabel">
      <property name="geometry">
       <rect>
        <x>70</x>
@@ -257,7 +244,7 @@
       <string>Graphs List</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="addGraphButton">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -276,7 +263,7 @@
       <string>ADD</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="deleteGraphButton">
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -297,7 +284,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="verticesDockWidget">
    <property name="minimumSize">
     <size>
      <width>230</width>
@@ -329,7 +316,7 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <widget class="QSpinBox" name="spinBox">
+    <widget class="QSpinBox" name="vertexWeightSpinBox">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -339,7 +326,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_4">
+    <widget class="QLineEdit" name="firstNodeSelectedLineEdit">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -355,7 +342,7 @@
       <string>First Node Selected</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_5">
+    <widget class="QLineEdit" name="secondNodeSelectedLineEdit">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -371,7 +358,7 @@
       <string>Second Node Selected</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_5">
+    <widget class="QLabel" name="vertexWeightLabel">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -390,7 +377,7 @@
       <string>Weight</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_6">
+    <widget class="QPushButton" name="connectNodesButton">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -409,7 +396,7 @@
       <string>CONNECT</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_7">
+    <widget class="QPushButton" name="biConnectNodesButton">
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -428,7 +415,7 @@
       <string>BI-CONNECT</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_8">
+    <widget class="QPushButton" name="deleteVertexButton">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -447,7 +434,7 @@
       <string>DELETE</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_9">
+    <widget class="QPushButton" name="biDeleteVertexButton">
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -484,7 +471,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
+  <widget class="QDockWidget" name="TitleDockWidget">
    <property name="minimumSize">
     <size>
      <width>960</width>
@@ -507,7 +494,7 @@
     <number>4</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_4">
-    <widget class="QPushButton" name="pushButton_12">
+    <widget class="QPushButton" name="fileButton">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -526,7 +513,7 @@
       <string>FILE</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_13">
+    <widget class="QPushButton" name="cancelButton">
      <property name="geometry">
       <rect>
        <x>70</x>
@@ -545,7 +532,7 @@
       <string>CANCEL</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_14">
+    <widget class="QPushButton" name="redoButton">
      <property name="geometry">
       <rect>
        <x>130</x>
@@ -566,7 +553,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_4">
+  <widget class="QDockWidget" name="nodesDockWidget">
    <property name="minimumSize">
     <size>
      <width>230</width>
@@ -601,10 +588,10 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_5">
-    <widget class="QLineEdit" name="lineEdit_2">
+    <widget class="QLineEdit" name="nodeNameLineEdit">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>30</x>
        <y>20</y>
        <width>191</width>
        <height>20</height>
@@ -614,20 +601,7 @@
       <string>Name</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_3">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>191</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="placeholderText">
-      <string>Value</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_4">
+    <widget class="QPushButton" name="addNodeButton">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -646,7 +620,7 @@
       <string>ADD</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_5">
+    <widget class="QPushButton" name="deleteNodeButton">
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -665,9 +639,38 @@
       <string>DEL</string>
      </property>
     </widget>
+    <widget class="QSpinBox" name="nodeValueSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>50</y>
+       <width>131</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="nodeValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>50</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>MS Reference Sans Serif</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Value</string>
+     </property>
+    </widget>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_5">
+  <widget class="QDockWidget" name="distancesDockWidget">
    <property name="minimumSize">
     <size>
      <width>230</width>
@@ -693,7 +696,7 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_6">
-    <widget class="QLineEdit" name="lineEdit_6">
+    <widget class="QLineEdit" name="selectedRootLineEdit">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -709,7 +712,7 @@
       <string>Selected Root</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_10">
+    <widget class="QPushButton" name="updateMinDistButton">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -727,7 +730,7 @@
       <string>UPDATE MIN</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_11">
+    <widget class="QPushButton" name="updateMaxDistButton">
      <property name="geometry">
       <rect>
        <x>120</x>
