@@ -1,15 +1,24 @@
 #pragma once
 
+#include "Invoker.hpp"
+#include "GraphViewer.hpp"
+#include "Graph.hpp"
+
+#pragma warning(push, 0) // remove the useless warning of Qt?
 #include <QtWidgets/QMainWindow>
 #include "ui_GraphViewerGUI.h"
+#pragma pop()
 
-class GraphViewerGUI : public QMainWindow
+namespace View
 {
-    Q_OBJECT
+    class GraphViewerGUI : public QMainWindow
+    {
+        Q_OBJECT
 
-public:
-    GraphViewerGUI(QWidget *parent = Q_NULLPTR);
+    public:
+        GraphViewerGUI(QWidget* parent = Q_NULLPTR);
 
-private:
-    Ui::GraphViewerGUIClass ui;
-};
+    private:
+        Ui::GraphViewerGUIClass ui;
+    };
+}

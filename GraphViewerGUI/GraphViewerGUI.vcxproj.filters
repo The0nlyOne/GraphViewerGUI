@@ -54,20 +54,22 @@
     <ClInclude Include="Vertex.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graph.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Command.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Invoker.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphViewer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Exception.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Invoker.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="GraphViewer.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Graph.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

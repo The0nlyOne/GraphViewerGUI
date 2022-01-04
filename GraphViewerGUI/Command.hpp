@@ -2,7 +2,6 @@
 
 #include "GraphViewer.hpp"
 
-
 namespace Model
 {
 

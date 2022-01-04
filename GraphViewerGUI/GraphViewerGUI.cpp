@@ -1,7 +1,10 @@
 #include "GraphViewerGUI.hpp"
 
-GraphViewerGUI::GraphViewerGUI(QWidget *parent)
-    : QMainWindow(parent)
+namespace View
 {
-    ui.setupUi(this);
+    GraphViewerGUI::GraphViewerGUI(QWidget* parent)
+        : QMainWindow(parent)
+    {
+        ui.setupUi(this);
+    }
 }

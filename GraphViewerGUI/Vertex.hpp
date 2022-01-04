@@ -2,6 +2,10 @@
 
 #include "Node.hpp"
 
+#pragma warning(push, 0)
+#include <QObject>
+#pragma pop()
+
 namespace Model
 {
 	typedef std::shared_ptr<Node> node_sptr;

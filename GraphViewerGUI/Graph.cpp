@@ -10,6 +10,7 @@ namespace Model
 
 	void Graph::addNodeAndChildren(node_sptr node) {
 		nodes_.insert(node);
+		emit nodeAddedSignal(node);
 		for (auto&& pairNodeWeight : node->getVertices()) {
 			addAllNodesAndVerticess(node, pairNodeWeight);
 		}
@@ -19,6 +20,7 @@ namespace Model
 		if (findVertex(parentNode, pairNodeWeight.first, pairNodeWeight.second)) { return; } // stop if vertex already exist
 
 		nodes_.insert(pairNodeWeight.first);
+		emit nodeAddedSignal(pairNodeWeight.first);
 		if (pairNodeWeight.first->getVertices().size() == 0) {
 			leaves_.insert(pairNodeWeight.first);
 		}
@@ -33,6 +35,7 @@ namespace Model
 
 		vertex_sptr vertex = std::make_shared<Vertex>(childNode, parentNode, weight);
 		vertices_.push_back(vertex);
+		emit vertexAddedSignal(vertex);
 		verticesNeighbours_[parentNode].push_back(vertex);
 		parentNodes_[childNode].push_back(parentNode);
 	}
@@ -43,6 +46,10 @@ namespace Model
 	}
 
 	void Graph::connectNodes(node_sptr firstNode, node_sptr secondNode, int weight) {
+		if (nodes_.empty()) {
+			root_ = firstNode;
+			addNodeAndChildren(firstNode);
+		}
 		if (returnSetItem(nodes_, firstNode)) {
 			firstNode->connect(secondNode, weight);
 			leaves_.erase(firstNode);
@@ -61,6 +68,7 @@ namespace Model
 		for (int i = 0; i < vertices_.size(); i++) {
 			if (vertices_[i] == vertex) {
 				vertices_.erase(vertices_.begin() + i);
+				emit vertexRemovedSignal(vertex);
 			}
 		}
 		for (int i = 0; i < verticesNeighbours_[vertex->getPreviousNode()].size(); i++) {
@@ -96,18 +104,21 @@ namespace Model
 	}
 
 	void Graph::deleteNode(node_sptr nodeToDel) {
-		nodes_.erase(nodeToDel); // does not throw exception if nodeToDel == nullptr
-		if (nodeToDel->isLeaf()) {
-			leaves_.erase(nodeToDel);
-		}
-		else {
-			for (auto&& vertex : verticesNeighbours_[nodeToDel]) {
-				disconnectVertex(vertex);
+		if (nodeToDel) {
+			nodes_.erase(nodeToDel); // does not throw exception if nodeToDel == nullptr
+			emit nodeRemovedSignal(nodeToDel);
+			if (nodeToDel->isLeaf()) {
+				leaves_.erase(nodeToDel);
 			}
-		}
-		for (auto&& node : parentNodes_[nodeToDel]) {
-			for (auto&& vertex : findVertices(node, nodeToDel)) {
-				disconnectVertex(vertex);
+			else {
+				for (auto&& vertex : verticesNeighbours_[nodeToDel]) {
+					disconnectVertex(vertex);
+				}
+			}
+			for (auto&& node : parentNodes_[nodeToDel]) {
+				for (auto&& vertex : findVertices(node, nodeToDel)) {
+					disconnectVertex(vertex);
+				}
 			}
 		}
 	}
@@ -123,6 +134,7 @@ namespace Model
 			updateMinDist(vertex);
 		}
 		root->incrementCount();
+		emit minDistUpdatedSignal();
 	}
 
 	void Graph::updateMaxDist(node_sptr root) {
@@ -136,6 +148,7 @@ namespace Model
 			updateMaxDist(vertex);
 		}
 		root->incrementCount();
+		emit maxDistUpdatedSignal();
 	}
 
 	void Graph::updateMinDist(vertex_sptr vertex) {

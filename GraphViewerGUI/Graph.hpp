@@ -10,14 +10,19 @@
 #include "Vertex.hpp"
 #include "Node.hpp"
 
+#pragma warning(push, 0)
+#include <QObject>
+#pragma pop()
+
 namespace Model
 {
 	typedef std::shared_ptr<Node> node_sptr;
 	typedef std::shared_ptr<Vertex> vertex_sptr;
 
-	class Graph {
+	class Graph : public QObject 
+	{
+		Q_OBJECT
 	public:
-
 		Graph() = default;
 
 		Graph(node_sptr root) :
@@ -85,6 +90,14 @@ namespace Model
 		void showMinRoute(node_sptr node); // does not work for some convexe/cyclique graph value?
 
 		void showMaxRoute(node_sptr node);  // does not work for some convexe/cyclique graph value?
+
+	signals:
+		void nodeAddedSignal(node_sptr node);
+		void nodeRemovedSignal(node_sptr node);
+		void vertexAddedSignal(vertex_sptr vertex);
+		void vertexRemovedSignal(vertex_sptr vertex);
+		void minDistUpdatedSignal();
+		void maxDistUpdatedSignal();
 
 	private:
 		std::string name_;

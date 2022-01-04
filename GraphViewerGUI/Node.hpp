@@ -5,6 +5,10 @@
 #include <vector>
 #include <utility>
 
+#pragma warning(push, 0)
+#include <QObject>
+#pragma pop()
+
 namespace Model
 {
 
