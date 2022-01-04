@@ -6,6 +6,7 @@
 
 #pragma warning(push, 0) // remove the useless warning of Qt?
 #include <QtWidgets/QMainWindow>
+#include <qcheckbox.h>
 #include "ui_GraphViewerGUI.h"
 #pragma pop()
 
@@ -17,6 +18,7 @@ namespace View
 
     public:
         GraphViewerGUI(QWidget* parent = Q_NULLPTR);
+        void initialize();
 
     private:
         Ui::GraphViewerGUIClass ui;
