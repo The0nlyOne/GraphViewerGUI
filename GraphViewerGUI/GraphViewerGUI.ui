@@ -531,6 +531,9 @@
      <property name="text">
       <string>CANCEL</string>
      </property>
+     <property name="shortcut">
+      <string>Ctrl+Z</string>
+     </property>
     </widget>
     <widget class="QPushButton" name="redoButton">
      <property name="geometry">
@@ -549,6 +552,9 @@
      </property>
      <property name="text">
       <string>REDO</string>
+     </property>
+     <property name="shortcut">
+      <string>Ctrl+Y, Ctrl+Shift+Z</string>
      </property>
     </widget>
    </widget>
