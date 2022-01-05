@@ -8,7 +8,7 @@ namespace View
     {
         ui.setupUi(this);
 
-        graphBoardScene_ = new QGraphicsScene();
+        graphBoardScene_ = new QGraphicsScene(this);
         graphBoardView_ = ui.graphBoardGraphicsView;
         graphBoardView_->setScene(graphBoardScene_);
 
@@ -85,17 +85,21 @@ namespace View
         NodeGUI* nodeGUI = new NodeGUI(node);
         nodeGUI->setX(newNodePos_.x());
         nodeGUI->setY(newNodePos_.y());
+        nodeGUI->setFlag(QGraphicsItem::ItemIsMovable);
+        nodeGUI->setFlag(QGraphicsItem::ItemIsSelectable);
+		// QBrush blackBrush(Qt::black);
+        
         graphBoardScene_->addItem(nodeGUI);
         
         // update the position of next Node
-        if (newNodePos_.x() + 40 < graphBoardView_->size().width()) {
-            newNodePos_.setX(newNodePos_.x() + 40);
+        if (newNodePos_.x() + 20 < graphBoardView_->size().width()) {
+            newNodePos_.setX(newNodePos_.x() + -10);
         }
-        else if (newNodePos_.x() + 40 > graphBoardView_->size().width() && newNodePos_.y() + 40 < graphBoardView_->size().height()) {
-            newNodePos_.setY(newNodePos_.y() + 40);
+        else if (newNodePos_.x() + 20 > graphBoardView_->size().width() && newNodePos_.y() + 20 < graphBoardView_->size().height()) {
+            newNodePos_.setY(newNodePos_.y() + 10);
         }
-        else if (newNodePos_.x() + 40 > graphBoardView_->size().width() && newNodePos_.y() + 40 > graphBoardView_->size().height()) {
-            newNodePos_.setX(newNodePos_.x() - 40);
+        else if (newNodePos_.x() + 20 > graphBoardView_->size().width() && newNodePos_.y() + 20 > graphBoardView_->size().height()) {
+            newNodePos_.setX(newNodePos_.x() - 10);
         }
     }
 

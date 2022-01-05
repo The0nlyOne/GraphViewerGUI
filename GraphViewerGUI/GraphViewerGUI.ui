@@ -25,6 +25,9 @@
   <property name="focusPolicy">
    <enum>Qt::NoFocus</enum>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>GraphViewerGUI</string>
   </property>
