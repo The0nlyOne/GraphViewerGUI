@@ -96,6 +96,7 @@
   <ItemGroup>
     <ClInclude Include="Command.hpp" />
     <ClInclude Include="Exception.hpp" />
+    <ClInclude Include="VertexGUI.hpp" />
     <QtMoc Include="Graph.hpp" />
     <QtMoc Include="GraphViewer.hpp" />
     <QtMoc Include="Invoker.hpp" />

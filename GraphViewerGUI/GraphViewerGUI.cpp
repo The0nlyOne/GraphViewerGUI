@@ -30,6 +30,7 @@ namespace View
         QObject::connect(ui.addGraphButton, SIGNAL(clicked()), this, SLOT(addGraphCmd()));
         QObject::connect(ui.addNodeButton, SIGNAL(clicked()), this, SLOT(addNodeCmd()));
         QObject::connect(ui.deleteNodeButton, SIGNAL(clicked()), this, SLOT(deleteNodeCmd()));
+        QObject::connect(ui.connectNodesButton, SIGNAL(clicked()), this, SLOT(connectNodesCmd()));
 
         // connect the model to the view
         QObject::connect(graphViewer_, &Model::GraphViewer::graphAddedSignal, this, &GraphViewerGUI::addGraphView);
@@ -46,6 +47,7 @@ namespace View
 
             QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
             QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
+            QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
             //QObject::connect(graphToAdd.get(), &Model::Graph::nodeShowed, this, &GraphViewerGUI::updateBudgetAction);
 
             try {
@@ -108,7 +110,7 @@ namespace View
     void GraphViewerGUI::deleteNodeCmd() {
         if (ui.nodeNameLineEdit->text() != "") {
             std::string name = ui.nodeNameLineEdit->text().toStdString();
-            std::shared_ptr<Model::Command> removeNode = std::make_shared<Model::removeNode>(graphViewer_->getCurrentGraph(), getNode(name));
+            std::shared_ptr<Model::Command> removeNode = std::make_shared<Model::removeNode>(graphViewer_->getCurrentGraph(), getNodeGUI(name)->getNode());
             invoker_->executeCommand(removeNode);
         }
     }
@@ -165,19 +167,40 @@ namespace View
         update();
     }
 
-    Model::node_sptr GraphViewerGUI::getNode(std::string name) {
+    NodeGUI* GraphViewerGUI::getNodeGUI(std::string name) {
         for (auto&& nodeGUI : currentGraphNodesGUI_) {
             if (nodeGUI->getNode()->getName() == name) {
-                return nodeGUI->getNode();
+                return nodeGUI;
             }
         }
         return nullptr;
     }
 
-    void GraphViewerGUI::setNewNodePos(int x, int y) {
+    void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
         newNodePos_.setX(x); newNodePos_.setY(y);
         verifyNodePos();
+        std::vector<Model::vertex_sptr> neighbourVertices = graphViewer_->getCurrentGraph()->getVerticesNeighbours()[nodeGUI->getNode()];
+        std::vector<Model::node_sptr> parentNodes = graphViewer_->getCurrentGraph()->getParentNodes()[nodeGUI->getNode()];
+        NodeGUI* secondNode;
+        for (auto&& vertex : neighbourVertices) {
+            VertexGUI* vertexGUI = findVertexGUI(vertex);
+            if (vertexGUI) {
+                //NodeGUI* firstNode = getNodeGUI(vertex->getPreviousNode()->getName());
+                // the firstNode GUI is the current one, nodeGUI (the parent)
+                secondNode = getNodeGUI(vertex->getNode()->getName());
 
+                vertexGUI->setLine(nodeGUI->x(), nodeGUI->y(), secondNode->x(), secondNode->y());
+            }
+        }
+        for (auto&& node : parentNodes) {
+            for (auto&& vertex : graphViewer_->getCurrentGraph()->findVertices(node, nodeGUI->getNode())) {
+                VertexGUI* verterxGUIParents = findVertexGUI(vertex);
+                if (verterxGUIParents) {
+                    NodeGUI* nodeGUIParent = getNodeGUI(node->getName());
+                    verterxGUIParents->setLine(nodeGUIParent->x(), nodeGUIParent->y(), nodeGUI->x(), nodeGUI->y());
+                }
+            }
+        }
     }
 
     void GraphViewerGUI::verifyNodePos() {
@@ -221,4 +244,64 @@ namespace View
             }
         }
     }
+
+    VertexGUI* GraphViewerGUI::findVertexGUI(Model::vertex_sptr vertex) {
+        for (auto&& existingVertex : currentGraphVerticesGUI_) {
+            if (existingVertex->getVertex() == vertex) {
+                return existingVertex;
+            }
+        }
+        return nullptr;
+    }
+
+    void GraphViewerGUI::connectNodesCmd() {
+        std::string firstNodeName = ui.firstNodeSelectedLineEdit->text().toStdString();
+        std::string secondNodeName = ui.secondNodeSelectedLineEdit->text().toStdString();
+        int weight = ui.vertexWeightSpinBox->value();
+        if (firstNodeName != "" && secondNodeName != "") {
+            std::shared_ptr<Model::Command> connectNodes;
+            connectNodes = std::make_shared<Model::ConnectNodes>(graphViewer_->getCurrentGraph(), 
+                getNodeGUI(firstNodeName)->getNode(), getNodeGUI(secondNodeName)->getNode(), weight);
+            try {
+                invoker_->executeCommand(connectNodes);
+            }
+            catch (Model::SameName& error) {}
+        }
+    }
+
+    void GraphViewerGUI::connectNodesView(Model::vertex_sptr vertex) {
+        /*
+        // creating the node and setting its position
+        NodeGUI* nodeGUI = new NodeGUI(node);
+        nodeGUI->setX(newNodePos_.x());
+        nodeGUI->setY(newNodePos_.y());
+        nodeGUI->setFlag(QGraphicsItem::ItemIsMovable);
+        nodeGUI->setFlag(QGraphicsItem::ItemIsSelectable);
+        
+        // connect signals
+        QObject::connect(nodeGUI, &NodeGUI::nodeReleased, this, &GraphViewerGUI::setNewNodePos);
+        QObject::connect(nodeGUI, &NodeGUI::nodeSelected, this, &GraphViewerGUI::manageNodesSelection);
+
+        graphBoardScene_->addItem(nodeGUI);
+        currentGraphNodesGUI_.push_back(nodeGUI);
+        
+        // update the position of next Node
+        verifyNodePos();
+        */
+
+        // creating the vertex and setting up the position
+        NodeGUI* firstNode = getNodeGUI(vertex->getPreviousNode()->getName());
+        NodeGUI* secondNode = getNodeGUI(vertex->getNode()->getName());
+        VertexGUI* vertexGUI = new VertexGUI(vertex, firstNode, secondNode);
+
+        // I set the line in the constructor
+        //vertexGUI->setLine(firstNode->x(), firstNode->y(), secondNode->x(), secondNode->y());
+        vertexGUI->setFlag(QGraphicsItem::ItemIsSelectable);
+
+        // connect signals
+        //QObject::connect(nodeGUI, &NodeGUI::nodeSelected, this, &GraphViewerGUI::manageNodesSelection);
+        graphBoardScene_->addItem(vertexGUI);
+        currentGraphVerticesGUI_.push_back(vertexGUI);
+    }
+
 }

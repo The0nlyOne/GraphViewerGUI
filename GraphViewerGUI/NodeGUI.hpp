@@ -6,8 +6,6 @@
 #include <QtWidgets/QMainWindow>
 #include <qgraphicsitem.h>
 #include <qpainter.h>
-#include <qmimedata.h>
-#include <qdrag.h>
 #include <qgraphicssceneevent.h>
 #pragma pop()
 
@@ -60,14 +58,14 @@ namespace View
 
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 			QGraphicsItem::mouseReleaseEvent(event);
-			emit nodeReleased(this->x(), this->y()); // to change 
+			emit nodeReleased(this, this->x(), this->y()); // to change 
 		}
 
 		void setBrush(QBrush brush) { brush_ = brush; }
 		QBrush getBrush() { return brush_; }
 
 	signals:
-		void nodeReleased(int x, int y);
+		void nodeReleased(NodeGUI* node, int x, int y);
 		void nodeSelected(NodeGUI* node);
 
 	private:

@@ -4,6 +4,7 @@
 #include "GraphViewer.hpp"
 #include "Graph.hpp"
 #include "NodeGUI.hpp"
+#include "VertexGUI.hpp"
 #include <queue>
 
 #pragma warning(push, 0) // remove the useless warning of Qt?
@@ -26,7 +27,8 @@ namespace View
         void initialize();
         void setUpConnections();
 
-        Model::node_sptr getNode(std::string name);
+        NodeGUI* getNodeGUI(std::string name);
+        VertexGUI* findVertexGUI(Model::vertex_sptr);
 
     public slots:
         void addNodeCmd();
@@ -37,10 +39,12 @@ namespace View
 
         void addGraphCmd();
         void addGraphView(Model::graph_sptr graph);
-
         void changeGraphView(Model::graph_sptr graph);
+
+        void connectNodesCmd();
+        void connectNodesView(Model::vertex_sptr vertex);
         
-        void setNewNodePos(int x, int y);
+        void setNewNodePos(NodeGUI* node, int x, int y);
         void verifyNodePos();
 
     private:
@@ -48,6 +52,7 @@ namespace View
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();
         std::vector<Model::graph_sptr> graphsList_;
         std::vector<NodeGUI*> currentGraphNodesGUI_;
+        std::vector<VertexGUI*> currentGraphVerticesGUI_;
         NodeGUI* previousFirstConnectedNode_ = nullptr;
         NodeGUI* previousSecondConnectedNode_ = nullptr;
 
