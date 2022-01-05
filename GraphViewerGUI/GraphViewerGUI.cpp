@@ -13,7 +13,13 @@ namespace View
 
     void GraphViewerGUI::initialize()
     {
+        graphBoardScene_ = new QGraphicsScene();
+        //graphBoardScene_->setSceneRect(QRect(0,0,1920,1080));
+        graphBoardScene_->addEllipse(10, 10, 20, 20);
+        graphBoardView_ = ui.graphBoardGraphicsView;
+        graphBoardView_->setScene(graphBoardScene_);
         setUpConnections();
+        //graphBoardView_->show();
     }
     
     void GraphViewerGUI::setUpConnections() {
@@ -55,6 +61,7 @@ namespace View
     }
 
     void GraphViewerGUI::addNodeCmd() {
+        // Verify that there can't be 2 Node with same name here.
         if (graphViewer_->getCurrentGraph() != nullptr) {
             if (ui.nodeNameLineEdit->text() != "") {
                 // getting needed info
@@ -70,7 +77,7 @@ namespace View
     }
 
     void GraphViewerGUI::addNodeView(Model::node_sptr node) {
-
+        
         QWidget* previousWidget = ui.graphScrollArea->widget();
 
         // creating new Widget
@@ -105,6 +112,7 @@ namespace View
         else if (newNodePos_.x() + 40 > graphBoardContent->size().width() && newNodePos_.y() + 40 > graphBoardContent->size().height()) {
             newNodePos_.setX(newNodePos_.x() - 40);
         }
+        
     }
 
     void GraphViewerGUI::changeGraphView(Model::graph_sptr graph) {

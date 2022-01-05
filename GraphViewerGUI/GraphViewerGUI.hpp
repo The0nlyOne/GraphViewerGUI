@@ -6,8 +6,12 @@
 
 #pragma warning(push, 0) // remove the useless warning of Qt?
 #include <QtWidgets/QMainWindow>
-#include <qcheckbox.h>
+#include "qcheckbox.h"
 #include "ui_GraphViewerGUI.h"
+#include "qgraphicsview.h"
+#include "qgraphicsscene.h"
+#include "qgraphicsitem.h"
+
 #pragma pop()
 
 namespace View
@@ -33,7 +37,10 @@ namespace View
         Ui::GraphViewerGUIClass ui;
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();
         std::vector<Model::graph_sptr> graphsList_;
+
         Model::GraphViewer* graphViewer_ = Model::GraphViewer::getGraphViewer();
+        QGraphicsScene* graphBoardScene_;
+        QGraphicsView* graphBoardView_;
         QPoint newNodePos_;
     };
 }

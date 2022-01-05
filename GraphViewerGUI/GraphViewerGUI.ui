@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1240</width>
-    <height>720</height>
+    <width>1097</width>
+    <height>651</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -32,8 +32,8 @@
    <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <property name="sizeConstraint">
        <enum>QLayout::SetNoConstraint</enum>
@@ -120,7 +120,7 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0">
+    <item>
      <widget class="QScrollArea" name="graphScrollArea">
       <property name="acceptDrops">
        <bool>true</bool>
@@ -139,10 +139,19 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1194</width>
-         <height>754</height>
+         <width>911</width>
+         <height>683</height>
         </rect>
        </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QGraphicsView" name="graphBoardGraphicsView">
+          <property name="dragMode">
+           <enum>QGraphicsView::ScrollHandDrag</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -153,7 +162,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1240</width>
+     <width>1097</width>
      <height>21</height>
     </rect>
    </property>
