@@ -112,8 +112,11 @@ namespace View
     void GraphViewerGUI::deleteNodeCmd() {
         if (ui.nodeNameLineEdit->text() != "") {
             std::string name = ui.nodeNameLineEdit->text().toStdString();
-            std::shared_ptr<Model::Command> removeNode = std::make_shared<Model::removeNode>(graphViewer_->getCurrentGraph(), getNodeGUI(name)->getNode());
-            invoker_->executeCommand(removeNode);
+            NodeGUI* nodeToDelete = getNodeGUI(name);
+            if (nodeToDelete) {
+                std::shared_ptr<Model::Command> removeNode = std::make_shared<Model::removeNode>(graphViewer_->getCurrentGraph(), nodeToDelete->getNode());
+                invoker_->executeCommand(removeNode);
+            }
         }
     }
 
