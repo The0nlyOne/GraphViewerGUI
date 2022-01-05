@@ -25,6 +25,10 @@ namespace Model
 	public:
 		Graph() = default;
 
+		Graph(std::string name) :
+			name_(name)
+		{}
+
 		Graph(node_sptr root) :
 			root_(root)
 		{

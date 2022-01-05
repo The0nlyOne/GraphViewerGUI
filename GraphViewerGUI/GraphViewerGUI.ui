@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1308</width>
-    <height>767</height>
+    <width>1240</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -137,25 +137,12 @@
       <widget class="QWidget" name="scrollAreaWidgetContents">
        <property name="geometry">
         <rect>
-         <x>55</x>
-         <y>59</y>
-         <width>710</width>
-         <height>484</height>
+         <x>0</x>
+         <y>0</y>
+         <width>1194</width>
+         <height>754</height>
         </rect>
        </property>
-       <widget class="QCheckBox" name="checkBox">
-        <property name="geometry">
-         <rect>
-          <x>520</x>
-          <y>70</y>
-          <width>70</width>
-          <height>17</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>CheckBox</string>
-        </property>
-       </widget>
       </widget>
      </widget>
     </item>
@@ -166,7 +153,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1308</width>
+     <width>1240</width>
      <height>21</height>
     </rect>
    </property>
@@ -224,16 +211,6 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_3">
-    <widget class="QListView" name="graphsListView">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>191</width>
-       <height>101</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLineEdit" name="graphNamelineEdit">
      <property name="geometry">
       <rect>
@@ -296,6 +273,16 @@
      </property>
      <property name="text">
       <string>DEL</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="graphsListWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>70</y>
+       <width>191</width>
+       <height>101</height>
+      </rect>
      </property>
     </widget>
    </widget>

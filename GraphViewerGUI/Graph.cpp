@@ -9,6 +9,7 @@ namespace Model
 	}
 
 	void Graph::addNodeAndChildren(node_sptr node) {
+		// no need to throw SameName error here because nodes_ is a set, so 2 same ptrs can't be in the same set.
 		nodes_.insert(node);
 		emit nodeAddedSignal(node);
 		for (auto&& pairNodeWeight : node->getVertices()) {
