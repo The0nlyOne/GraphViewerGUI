@@ -60,9 +60,6 @@
     <ClInclude Include="Exception.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NodeGUI.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Invoker.hpp">
@@ -74,5 +71,11 @@
     <QtMoc Include="Graph.hpp">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="NodeGUI.hpp">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

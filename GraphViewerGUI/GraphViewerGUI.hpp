@@ -23,6 +23,7 @@ namespace View
         GraphViewerGUI(QWidget* parent = Q_NULLPTR);
         void initialize();
         void setUpConnections();
+        
 
     public slots:
         void addNodeCmd();
@@ -32,6 +33,10 @@ namespace View
         void addGraphView(Model::graph_sptr graph);
 
         void changeGraphView(Model::graph_sptr graph);
+        
+        void setNewNodePos(int x, int y);
+        void verifyNodePos();
+
     private:
         Ui::GraphViewerGUIClass ui;
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();

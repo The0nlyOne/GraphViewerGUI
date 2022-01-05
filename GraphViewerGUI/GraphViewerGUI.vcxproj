@@ -100,8 +100,11 @@
     <QtMoc Include="GraphViewer.hpp" />
     <QtMoc Include="Invoker.hpp" />
     <ClInclude Include="Node.hpp" />
-    <ClInclude Include="NodeGUI.hpp" />
+    <QtMoc Include="NodeGUI.hpp" />
     <ClInclude Include="Vertex.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
