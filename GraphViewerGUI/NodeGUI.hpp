@@ -24,10 +24,6 @@ namespace View
 		QRectF boundingRect() const override
 		{
 			qreal penWidth = 1;
-			/*
-			return QRectF(-radius_ - penWidth / 2, -radius_ - penWidth / 2,
-				diameter_ + penWidth, diameter_ + penWidth);
-			*/
 			return QRectF(0 + penWidth, 0 + penWidth, diameter_ + penWidth, diameter_ + penWidth);
 		}
 		

@@ -190,7 +190,6 @@ namespace View
         for (auto&& vertex : neighbourVertices) {
             VertexGUI* vertexGUI = findVertexGUI(vertex);
             if (vertexGUI) {
-                //NodeGUI* firstNode = getNodeGUI(vertex->getPreviousNode()->getName());
                 // the firstNode GUI is the current one, nodeGUI (the parent)
                 secondNode = getNodeGUI(vertex->getNode()->getName());
 
@@ -315,6 +314,7 @@ namespace View
         std::string previousNodeName = vertexGUI->getVertex()->getPreviousNode()->getName();
         std::string nodeName = vertexGUI->getVertex()->getNode()->getName();
         ui.vertexSelectedLineEdit->setText(QString::fromStdString(previousNodeName + " -> " + nodeName));
+        ui.vertexWeightSpinBox->setValue(vertexGUI->getVertex()->getWeight());
     }
 
 }
