@@ -41,9 +41,10 @@ namespace Model
 
 		vertex_sptr vertex = std::make_shared<Vertex>(childNode, parentNode, weight);
 		vertices_.push_back(vertex);
-		emit vertexAddedSignal(vertex);
 		verticesNeighbours_[parentNode].push_back(vertex);
 		parentNodes_[childNode].push_back(parentNode);
+		emit vertexAddedSignal(vertex);
+
 	}
 
 	node_sptr Graph::returnSetItem(std::unordered_set<node_sptr> unorderedSet, node_sptr firstNode) {
@@ -70,20 +71,24 @@ namespace Model
 	}
 
 	void Graph::disconnectVertex(vertex_sptr vertex) {
-		vertex->getPreviousNode()->disconnect(vertex->getNode(), vertex->getWeight());
-		for (int i = 0; i < vertices_.size(); i++) {
-			if (vertices_[i] == vertex) {
-				vertices_.erase(vertices_.begin() + i);
-				emit vertexDeletedSignal(vertex);
+		if (vertex) {
+			vertex->getPreviousNode()->disconnect(vertex->getNode(), vertex->getWeight());
+			for (int i = 0; i < vertices_.size(); i++) {
+				if (vertices_[i] == vertex) {
+					vertices_.erase(vertices_.begin() + i);
+					break;
+				}
 			}
-		}
-		for (int i = 0; i < verticesNeighbours_[vertex->getPreviousNode()].size(); i++) {
-			if (verticesNeighbours_[vertex->getPreviousNode()][i] == vertex) {
-				verticesNeighbours_[vertex->getPreviousNode()].erase(verticesNeighbours_[vertex->getPreviousNode()].begin() + i);
+			for (int i = 0; i < verticesNeighbours_[vertex->getPreviousNode()].size(); i++) {
+				if (verticesNeighbours_[vertex->getPreviousNode()][i] == vertex) {
+					verticesNeighbours_[vertex->getPreviousNode()].erase(verticesNeighbours_[vertex->getPreviousNode()].begin() + i); // erreur car je change la taille du tableau pendant la suppression
+					break;
+				}
 			}
+			updateMinDist(root_);  // use bool isMin to know which function to call between updateMaxDist and updateMinDist
+			updateMaxDist(root_);
+			emit vertexDeletedSignal(vertex);
 		}
-		updateMinDist(root_);  // use bool isMin to know which function to call between updateMaxDist and updateMinDist
-		updateMaxDist(root_);
 	}
 
 	void Graph::disconnectNodes(node_sptr firstNode, node_sptr secondNode, int weight) {
@@ -117,12 +122,13 @@ namespace Model
 				}
 			}
 			nodes_.erase(nodeToDel); // does not throw exception if nodeToDel == nullptr
-			emit nodeDeletedSignal(nodeToDel);
+			
 			if (nodeToDel->isLeaf()) {
 				leaves_.erase(nodeToDel);
 			}
 			else {
-				for (auto&& vertex : verticesNeighbours_[nodeToDel]) {
+				std::vector<vertex_sptr> verticeNeighbourCopy = verticesNeighbours_[nodeToDel]; // a copy so when the size of the orginal container verticeNeighbours_
+				for (auto&& vertex : verticeNeighbourCopy) {									// is not modified while we iterate
 					disconnectVertex(vertex);
 				}
 			}
@@ -131,6 +137,7 @@ namespace Model
 					disconnectVertex(vertex);
 				}
 			}
+			emit nodeDeletedSignal(nodeToDel);
 		}
 	}
 

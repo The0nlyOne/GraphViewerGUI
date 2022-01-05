@@ -31,6 +31,7 @@ namespace View
         QObject::connect(ui.addNodeButton, SIGNAL(clicked()), this, SLOT(addNodeCmd()));
         QObject::connect(ui.deleteNodeButton, SIGNAL(clicked()), this, SLOT(deleteNodeCmd()));
         QObject::connect(ui.connectNodesButton, SIGNAL(clicked()), this, SLOT(connectNodesCmd()));
+        QObject::connect(ui.deleteVertexButton, SIGNAL(clicked()), this, SLOT(deleteVertexCmd()));
 
         // connect the model to the view
         QObject::connect(graphViewer_, &Model::GraphViewer::graphAddedSignal, this, &GraphViewerGUI::addGraphView);
@@ -48,6 +49,7 @@ namespace View
             QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
             QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
             QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
+            QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
             //QObject::connect(graphToAdd.get(), &Model::Graph::nodeShowed, this, &GraphViewerGUI::updateBudgetAction);
 
             try {
@@ -302,6 +304,49 @@ namespace View
         //QObject::connect(nodeGUI, &NodeGUI::nodeSelected, this, &GraphViewerGUI::manageNodesSelection);
         graphBoardScene_->addItem(vertexGUI);
         currentGraphVerticesGUI_.push_back(vertexGUI);
+    }
+
+    void GraphViewerGUI::deleteVertexCmd() {
+        /*
+        std::shared_ptr<Model::Command> deleteVertex;
+        deleteVertex = std::make_shared<Model::DisconnectVertex>(graphViewer_->getCurrentGraph(),
+            getNodeGUI(firstNodeName)->getNode(), getNodeGUI(secondNodeName)->getNode(), weight);
+        try {
+            invoker_->executeCommand(connectNodes);
+        }
+        catch (Model::SameName& error) {}
+        */
+    }
+
+    void GraphViewerGUI::deleteVertexView(Model::vertex_sptr vertex) {
+        /*
+                NodeGUI* nodeToDelete;
+        for (int i = 0; i < currentGraphNodesGUI_.size(); i++) {
+            if (currentGraphNodesGUI_[i]->getNode() == node) {
+                nodeToDelete = currentGraphNodesGUI_[i];
+                currentGraphNodesGUI_.erase(currentGraphNodesGUI_.begin() + i);
+            }
+        }
+        graphBoardScene_->removeItem(nodeToDelete);
+        if (nodeToDelete == previousFirstConnectedNode_) { previousFirstConnectedNode_ = nullptr; }
+        else if (nodeToDelete == previousSecondConnectedNode_) { previousSecondConnectedNode_ = nullptr; }
+
+        if (nodeToDelete->getNode()->getName() == ui.firstNodeSelectedLineEdit->text().toStdString()) {
+            ui.firstNodeSelectedLineEdit->setText("");
+        }
+        else if (nodeToDelete->getNode()->getName() == ui.secondNodeSelectedLineEdit->text().toStdString()) {
+            ui.secondNodeSelectedLineEdit->setText("");
+        }
+        */
+        VertexGUI* vertexToDelete;;
+        for (int i = 0; i < currentGraphVerticesGUI_.size(); i++) {
+            if (currentGraphVerticesGUI_[i]->getVertex() == vertex) {
+                vertexToDelete = currentGraphVerticesGUI_[i];
+                currentGraphVerticesGUI_.erase(currentGraphVerticesGUI_.begin() + i);
+                graphBoardScene_->removeItem(vertexToDelete);
+                break;
+            }
+        }
     }
 
 }

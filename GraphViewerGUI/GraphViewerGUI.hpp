@@ -43,6 +43,8 @@ namespace View
 
         void connectNodesCmd();
         void connectNodesView(Model::vertex_sptr vertex);
+        void deleteVertexCmd();
+        void deleteVertexView(Model::vertex_sptr vertex);
         
         void setNewNodePos(NodeGUI* node, int x, int y);
         void verifyNodePos();
