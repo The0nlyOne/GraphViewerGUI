@@ -53,7 +53,7 @@ namespace Model
 	}
 
 	void Graph::connectNodes(node_sptr firstNode, node_sptr secondNode, int weight) {
-		if (nodes_.empty()) {
+		if (nodes_.empty() || !root_) {
 			root_ = firstNode;
 			addNodeAndChildren(firstNode);
 		}

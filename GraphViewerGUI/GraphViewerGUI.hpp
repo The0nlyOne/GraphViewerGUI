@@ -45,7 +45,8 @@ namespace View
         void connectNodesView(Model::vertex_sptr vertex);
         void deleteVertexCmd();
         void deleteVertexView(Model::vertex_sptr vertex);
-        
+        void updateSelectedVertex(VertexGUI* vertex);
+
         void setNewNodePos(NodeGUI* node, int x, int y);
         void verifyNodePos();
 
@@ -55,8 +56,11 @@ namespace View
         std::vector<Model::graph_sptr> graphsList_;
         std::vector<NodeGUI*> currentGraphNodesGUI_;
         std::vector<VertexGUI*> currentGraphVerticesGUI_;
+
         NodeGUI* previousFirstConnectedNode_ = nullptr;
         NodeGUI* previousSecondConnectedNode_ = nullptr;
+
+        VertexGUI* selectedVertex_ = nullptr;
 
         Model::GraphViewer* graphViewer_ = Model::GraphViewer::getGraphViewer();
         QGraphicsScene* graphBoardScene_;

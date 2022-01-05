@@ -275,72 +275,30 @@ namespace View
     }
 
     void GraphViewerGUI::connectNodesView(Model::vertex_sptr vertex) {
-        /*
-        // creating the node and setting its position
-        NodeGUI* nodeGUI = new NodeGUI(node);
-        nodeGUI->setX(newNodePos_.x());
-        nodeGUI->setY(newNodePos_.y());
-        nodeGUI->setFlag(QGraphicsItem::ItemIsMovable);
-        nodeGUI->setFlag(QGraphicsItem::ItemIsSelectable);
-        
-        // connect signals
-        QObject::connect(nodeGUI, &NodeGUI::nodeReleased, this, &GraphViewerGUI::setNewNodePos);
-        QObject::connect(nodeGUI, &NodeGUI::nodeSelected, this, &GraphViewerGUI::manageNodesSelection);
-
-        graphBoardScene_->addItem(nodeGUI);
-        currentGraphNodesGUI_.push_back(nodeGUI);
-        
-        // update the position of next Node
-        verifyNodePos();
-        */
-
         // creating the vertex and setting up the position
         NodeGUI* firstNode = getNodeGUI(vertex->getPreviousNode()->getName());
         NodeGUI* secondNode = getNodeGUI(vertex->getNode()->getName());
         VertexGUI* vertexGUI = new VertexGUI(vertex, firstNode, secondNode);
 
         // I set the line in the constructor
-        //vertexGUI->setLine(firstNode->x(), firstNode->y(), secondNode->x(), secondNode->y());
         vertexGUI->setFlag(QGraphicsItem::ItemIsSelectable);
 
         // connect signals
-        //QObject::connect(nodeGUI, &NodeGUI::nodeSelected, this, &GraphViewerGUI::manageNodesSelection);
+        QObject::connect(vertexGUI, &VertexGUI::vertexPressed, this, &GraphViewerGUI::updateSelectedVertex);
         graphBoardScene_->addItem(vertexGUI);
         currentGraphVerticesGUI_.push_back(vertexGUI);
     }
 
     void GraphViewerGUI::deleteVertexCmd() {
-        /*
-        std::shared_ptr<Model::Command> deleteVertex;
-        deleteVertex = std::make_shared<Model::DisconnectVertex>(graphViewer_->getCurrentGraph(),
-            getNodeGUI(firstNodeName)->getNode(), getNodeGUI(secondNodeName)->getNode(), weight);
-        try {
-            invoker_->executeCommand(connectNodes);
+        if (selectedVertex_) {
+            std::shared_ptr<Model::Command> deleteVertex;
+            deleteVertex = std::make_shared<Model::DisconnectVertex>(graphViewer_->getCurrentGraph(),
+                selectedVertex_->getVertex());
+            invoker_->executeCommand(deleteVertex);
         }
-        catch (Model::SameName& error) {}
-        */
     }
 
     void GraphViewerGUI::deleteVertexView(Model::vertex_sptr vertex) {
-        /*
-                NodeGUI* nodeToDelete;
-        for (int i = 0; i < currentGraphNodesGUI_.size(); i++) {
-            if (currentGraphNodesGUI_[i]->getNode() == node) {
-                nodeToDelete = currentGraphNodesGUI_[i];
-                currentGraphNodesGUI_.erase(currentGraphNodesGUI_.begin() + i);
-            }
-        }
-        graphBoardScene_->removeItem(nodeToDelete);
-        if (nodeToDelete == previousFirstConnectedNode_) { previousFirstConnectedNode_ = nullptr; }
-        else if (nodeToDelete == previousSecondConnectedNode_) { previousSecondConnectedNode_ = nullptr; }
-
-        if (nodeToDelete->getNode()->getName() == ui.firstNodeSelectedLineEdit->text().toStdString()) {
-            ui.firstNodeSelectedLineEdit->setText("");
-        }
-        else if (nodeToDelete->getNode()->getName() == ui.secondNodeSelectedLineEdit->text().toStdString()) {
-            ui.secondNodeSelectedLineEdit->setText("");
-        }
-        */
         VertexGUI* vertexToDelete;;
         for (int i = 0; i < currentGraphVerticesGUI_.size(); i++) {
             if (currentGraphVerticesGUI_[i]->getVertex() == vertex) {
@@ -350,6 +308,13 @@ namespace View
                 break;
             }
         }
+    }
+
+    void GraphViewerGUI::updateSelectedVertex(VertexGUI* vertexGUI) {
+        selectedVertex_ = vertexGUI;
+        std::string previousNodeName = vertexGUI->getVertex()->getPreviousNode()->getName();
+        std::string nodeName = vertexGUI->getVertex()->getNode()->getName();
+        ui.vertexSelectedLineEdit->setText(QString::fromStdString(previousNodeName + " -> " + nodeName));
     }
 
 }

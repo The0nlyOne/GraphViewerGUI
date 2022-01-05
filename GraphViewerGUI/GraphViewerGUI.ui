@@ -480,7 +480,7 @@
       <string>BI-DELETE</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_7">
+    <widget class="QLineEdit" name="vertexSelectedLineEdit">
      <property name="geometry">
       <rect>
        <x>20</x>
