@@ -111,6 +111,11 @@ namespace Model
 
 	void Graph::deleteNode(node_sptr nodeToDel) {
 		if (nodeToDel) {
+			for (auto&& node : nodes_) { // to make sure that we change the root if the current one is deleted
+				if (node != nodeToDel) {
+					root_ = node;
+				}
+			}
 			nodes_.erase(nodeToDel); // does not throw exception if nodeToDel == nullptr
 			emit nodeDeletedSignal(nodeToDel);
 			if (nodeToDel->isLeaf()) {

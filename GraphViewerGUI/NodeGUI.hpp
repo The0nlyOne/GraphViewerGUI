@@ -70,7 +70,7 @@ namespace View
 
 	private:
 		Model::node_sptr node_;
-		int radius_ = 5;
+		int radius_ = 7;
 		int diameter_ = radius_ * 2;
 		QBrush brush_ = QBrush(Qt::black);
 	};
