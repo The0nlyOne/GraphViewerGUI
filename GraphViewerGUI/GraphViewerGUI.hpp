@@ -3,6 +3,8 @@
 #include "Invoker.hpp"
 #include "GraphViewer.hpp"
 #include "Graph.hpp"
+#include "NodeGUI.hpp"
+#include <queue>
 
 #pragma warning(push, 0) // remove the useless warning of Qt?
 #include <QtWidgets/QMainWindow>
@@ -23,11 +25,15 @@ namespace View
         GraphViewerGUI(QWidget* parent = Q_NULLPTR);
         void initialize();
         void setUpConnections();
-        
+
+        Model::node_sptr getNode(std::string name);
 
     public slots:
         void addNodeCmd();
         void addNodeView(Model::node_sptr node);
+        void deleteNodeCmd();
+        void deleteNodeView(Model::node_sptr node);
+        void manageNodesSelection(NodeGUI* nodeGUI);
 
         void addGraphCmd();
         void addGraphView(Model::graph_sptr graph);
@@ -41,10 +47,15 @@ namespace View
         Ui::GraphViewerGUIClass ui;
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();
         std::vector<Model::graph_sptr> graphsList_;
+        std::vector<NodeGUI*> currentGraphNodesGUI_;
+        NodeGUI* previousFirstConnectedNode_ = nullptr;
+        NodeGUI* previousSecondConnectedNode_ = nullptr;
 
         Model::GraphViewer* graphViewer_ = Model::GraphViewer::getGraphViewer();
         QGraphicsScene* graphBoardScene_;
         QGraphicsView* graphBoardView_;
         QPoint newNodePos_;
+
+        int selectedNodeCount_ = 0; // to know the first and second Node Selected
     };
 }

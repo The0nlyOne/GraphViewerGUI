@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1174</width>
-    <height>660</height>
+    <width>942</width>
+    <height>598</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -142,8 +142,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>686</width>
-         <height>496</height>
+         <width>454</width>
+         <height>434</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -171,7 +171,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1174</width>
+     <width>942</width>
      <height>21</height>
     </rect>
    </property>
@@ -345,6 +345,12 @@
        <width>121</width>
        <height>22</height>
       </rect>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>666666666</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="firstNodeSelectedLineEdit">

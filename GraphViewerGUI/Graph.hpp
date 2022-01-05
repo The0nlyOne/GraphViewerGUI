@@ -9,6 +9,7 @@
 
 #include "Vertex.hpp"
 #include "Node.hpp"
+#include "Exception.hpp"
 
 #pragma warning(push, 0)
 #include <QObject>
@@ -97,9 +98,9 @@ namespace Model
 
 	signals:
 		void nodeAddedSignal(node_sptr node);
-		void nodeRemovedSignal(node_sptr node);
+		void nodeDeletedSignal(node_sptr node);
 		void vertexAddedSignal(vertex_sptr vertex);
-		void vertexRemovedSignal(vertex_sptr vertex);
+		void vertexDeletedSignal(vertex_sptr vertex);
 		void minDistUpdatedSignal();
 		void maxDistUpdatedSignal();
 

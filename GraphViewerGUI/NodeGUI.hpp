@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GraphViewer.hpp"
-#include "GraphViewerGUI.hpp"
 
 #pragma warning(push, 0) // remove the useless warning of Qt?
 #include <QtWidgets/QMainWindow>
@@ -19,8 +18,7 @@ namespace View
 	public:
 		NodeGUI() = default;
 		NodeGUI(Model::node_sptr node) :
-			name_(node->getName()), value_(node->getValue()), distMin_(node->getDistForMax()),
-			distMax_(node->getDistForMax())
+			node_(node)
 		{
 			setAcceptDrops(true); // useless when ItemIsMovable
 			setAcceptHoverEvents(true);
@@ -37,51 +35,46 @@ namespace View
 		
 		void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override
 		{
-			QBrush blackBrush(Qt::black);
-			painter->setBrush(blackBrush);
+			painter->setBrush(brush_);
 			painter->drawEllipse(0, 0, diameter_, diameter_);
-			this->setOpacity(50);
-
 		}
 
-		void MousePressEvent(QGraphicsSceneMouseEvent* event) {
-			QGraphicsItem::mousePressEvent(event);
-			
-			if (event->button() == Qt::MouseButton::LeftButton) {
-				this->setSelected(!this->isSelected());
+		Model::node_sptr getNode() { return node_; }
+		
+		QVariant itemChange(GraphicsItemChange change, const QVariant& value) { // it is called too many time for what I am using it
+			if (change == QGraphicsItem::ItemSelectedChange) {
+				if (value.toBool()) { // is selected
+					brush_ = QBrush(Qt::yellow);
+					update();
+					emit nodeSelected(this);
+				}
+				else { // isNotSelected check if amount of selected Node > 2
+					if (brush_.color() != Qt::red) {
+						brush_ = QBrush(Qt::black);
+						update();
+					}
+				}
 			}
-			prepareGeometryChange();
-			this->setOpacity(100);
+			return QGraphicsItem::itemChange(change, value);
 		}
 
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 			QGraphicsItem::mouseReleaseEvent(event);
 			emit nodeReleased(this->x(), this->y()); // to change 
 		}
-		/*
-		void dragEnterEvent(QGraphicsSceneDragDropEvent* event)
-		{
-			event->setAccepted(event->mimeData()->hasFormat("text/plain"));
-		}
 
-		void mousePressEvent(QGraphicsSceneMouseEvent* event) {
-			QMimeData* data = new QMimeData;
-			QDrag* drag = new QDrag(event->widget());
-			drag->setMimeData(data);
-			drag->exec();
-		}
-		*/
+		void setBrush(QBrush brush) { brush_ = brush; }
+		QBrush getBrush() { return brush_; }
 
 	signals:
 		void nodeReleased(int x, int y);
+		void nodeSelected(NodeGUI* node);
 
 	private:
+		Model::node_sptr node_;
 		int radius_ = 5;
 		int diameter_ = radius_ * 2;
-		std::string name_;
-		int value_;
-		int distMin_;
-		int distMax_;
+		QBrush brush_ = QBrush(Qt::black);
 	};
 
 }

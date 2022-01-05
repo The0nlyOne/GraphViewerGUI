@@ -9,7 +9,12 @@ namespace Model
 	}
 
 	void Graph::addNodeAndChildren(node_sptr node) {
-		// no need to throw SameName error here because nodes_ is a set, so 2 same ptrs can't be in the same set.
+		// even if node is a set, we must throw same name error because two different pointers can have nodes with same name
+		for (auto&& existingNode : nodes_) {
+			if (existingNode->getName() == node->getName()) {
+				throw SameName("A Node with this name already exist.\n");
+			}
+		}
 		nodes_.insert(node);
 		emit nodeAddedSignal(node);
 		for (auto&& pairNodeWeight : node->getVertices()) {
@@ -69,7 +74,7 @@ namespace Model
 		for (int i = 0; i < vertices_.size(); i++) {
 			if (vertices_[i] == vertex) {
 				vertices_.erase(vertices_.begin() + i);
-				emit vertexRemovedSignal(vertex);
+				emit vertexDeletedSignal(vertex);
 			}
 		}
 		for (int i = 0; i < verticesNeighbours_[vertex->getPreviousNode()].size(); i++) {
@@ -107,7 +112,7 @@ namespace Model
 	void Graph::deleteNode(node_sptr nodeToDel) {
 		if (nodeToDel) {
 			nodes_.erase(nodeToDel); // does not throw exception if nodeToDel == nullptr
-			emit nodeRemovedSignal(nodeToDel);
+			emit nodeDeletedSignal(nodeToDel);
 			if (nodeToDel->isLeaf()) {
 				leaves_.erase(nodeToDel);
 			}

@@ -40,8 +40,8 @@ namespace Model
 	class removeNode : public Command
 	{
 	public:
-		removeNode(graph_sptr graph, node_sptr nodeToAdd) :
-			addNodeCmd(graph, nodeToAdd) {}
+		removeNode(graph_sptr graph, node_sptr nodeToRemove) :
+			addNodeCmd(graph, nodeToRemove) {}
 		void execute() override { addNodeCmd.cancel(); }
 		void cancel() override { addNodeCmd.execute(); }
 		void redo() override { addNodeCmd.cancel(); }
