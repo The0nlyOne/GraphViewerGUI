@@ -100,6 +100,7 @@
     <QtMoc Include="GraphViewer.hpp" />
     <QtMoc Include="Invoker.hpp" />
     <ClInclude Include="Node.hpp" />
+    <ClInclude Include="NodeGUI.hpp" />
     <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

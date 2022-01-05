@@ -1,4 +1,5 @@
 #include "GraphViewerGUI.hpp"
+#include "NodeGUI.hpp"
 
 namespace View
 {
@@ -6,6 +7,11 @@ namespace View
         : QMainWindow(parent)
     {
         ui.setupUi(this);
+
+        graphBoardScene_ = new QGraphicsScene();
+        graphBoardView_ = ui.graphBoardGraphicsView;
+        graphBoardView_->setScene(graphBoardScene_);
+
         QPoint newNodePos(0, 0);
         newNodePos_ = newNodePos;
 
@@ -13,11 +19,8 @@ namespace View
 
     void GraphViewerGUI::initialize()
     {
-        graphBoardScene_ = new QGraphicsScene();
-        //graphBoardScene_->setSceneRect(QRect(0,0,1920,1080));
-        graphBoardScene_->addEllipse(10, 10, 20, 20);
-        graphBoardView_ = ui.graphBoardGraphicsView;
-        graphBoardView_->setScene(graphBoardScene_);
+        // graphBoardScene_->addEllipse(10, 10, 20, 20);
+
         setUpConnections();
         //graphBoardView_->show();
     }
@@ -78,41 +81,22 @@ namespace View
 
     void GraphViewerGUI::addNodeView(Model::node_sptr node) {
         
-        QWidget* previousWidget = ui.graphScrollArea->widget();
-
-        // creating new Widget
-        QWidget* graphBoardContent = new QWidget();
-        graphBoardContent->setObjectName(QString::fromUtf8("graphBoardContents"));
-        graphBoardContent->setGeometry(QRect(0, 0, 1194, 754));
-
-        // creating the node
-        QCheckBox* nodeView = new QCheckBox(graphBoardContent);
-        nodeView->setObjectName(QString::fromStdString(node->getName()));
-        nodeView->setGeometry(QRect(newNodePos_.x(), newNodePos_.y(), 17, 17));
-
-        // copying the previous node to the new node
-        for (auto&& widget : previousWidget->children()) {
-            QCheckBox* previousNode = dynamic_cast<QCheckBox*>(widget);
-            QCheckBox* previousNodeCopy = new QCheckBox(graphBoardContent);
-            previousNodeCopy->setObjectName(previousNode->objectName());
-            previousNodeCopy->setGeometry(QRect(previousNode->x(), previousNode->y(), 17, 17));
-            previousNodeCopy->setParent(graphBoardContent);
-        }
-
-        // updating the widget
-        ui.graphScrollArea->setWidget(graphBoardContent);
-
+        // creating the node and setting its position
+        NodeGUI* nodeGUI = new NodeGUI(node);
+        nodeGUI->setX(newNodePos_.x());
+        nodeGUI->setY(newNodePos_.y());
+        graphBoardScene_->addItem(nodeGUI);
+        
         // update the position of next Node
-        if (newNodePos_.x() + 40 < graphBoardContent->size().width()) {
+        if (newNodePos_.x() + 40 < graphBoardView_->size().width()) {
             newNodePos_.setX(newNodePos_.x() + 40);
         }
-        else if (newNodePos_.x() + 40 > graphBoardContent->size().width() && newNodePos_.y() + 40 < graphBoardContent->size().height()) {
+        else if (newNodePos_.x() + 40 > graphBoardView_->size().width() && newNodePos_.y() + 40 < graphBoardView_->size().height()) {
             newNodePos_.setY(newNodePos_.y() + 40);
         }
-        else if (newNodePos_.x() + 40 > graphBoardContent->size().width() && newNodePos_.y() + 40 > graphBoardContent->size().height()) {
+        else if (newNodePos_.x() + 40 > graphBoardView_->size().width() && newNodePos_.y() + 40 > graphBoardView_->size().height()) {
             newNodePos_.setX(newNodePos_.x() - 40);
         }
-        
     }
 
     void GraphViewerGUI::changeGraphView(Model::graph_sptr graph) {

@@ -11,7 +11,6 @@
 #include "qgraphicsview.h"
 #include "qgraphicsscene.h"
 #include "qgraphicsitem.h"
-
 #pragma pop()
 
 namespace View

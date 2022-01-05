@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1097</width>
-    <height>651</height>
+    <width>1174</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -129,7 +129,7 @@
        <enum>QAbstractScrollArea::AdjustIgnored</enum>
       </property>
       <property name="widgetResizable">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -139,15 +139,21 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>911</width>
-         <height>683</height>
+         <width>686</width>
+         <height>496</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="QGraphicsView" name="graphBoardGraphicsView">
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
           <property name="dragMode">
-           <enum>QGraphicsView::ScrollHandDrag</enum>
+           <enum>QGraphicsView::RubberBandDrag</enum>
+          </property>
+          <property name="viewportUpdateMode">
+           <enum>QGraphicsView::FullViewportUpdate</enum>
           </property>
          </widget>
         </item>
@@ -162,7 +168,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1097</width>
+     <width>1174</width>
      <height>21</height>
     </rect>
    </property>
