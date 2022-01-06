@@ -8,6 +8,18 @@ namespace Model
 		return (first->getWeight() < second->getWeight()) ? true : false;
 	}
 
+
+	void Graph::clearGraph() {
+		root_ = nullptr;
+		nodes_.clear();
+		leaves_.clear();
+		vertices_.clear();
+		verticesNeighbours_.clear();
+		parentNodes_.clear();
+
+		emit graphCleared();
+	}
+
 	void Graph::addNodeAndChildren(node_sptr node) {
 		bool canAddNode = true;
 		// even if node is a set, we must throw same name error because two different pointers can have nodes with same name
@@ -280,7 +292,7 @@ namespace Model
 		for (auto&& vertex : verticesNeighbours_[root]) {
 			if (vertex->getKnown()) {
 				vertex->setKnown(false);
-				knownVertices_.second--;
+				//knownVertices_.second--;
 				resetKnownChildrenNodes(vertex->getNode());
 			}
 		}

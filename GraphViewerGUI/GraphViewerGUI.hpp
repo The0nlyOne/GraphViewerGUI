@@ -27,8 +27,9 @@ namespace View
         void initialize();
         void setUpConnections();
 
-        NodeGUI* getNodeGUI(std::string name);
-        VertexGUI* findVertexGUI(Model::vertex_sptr);
+        //NodeGUI* getNodeGUI(std::string name);
+        //Model::graph_sptr getGraph(std::string name);
+        //VertexGUI* findVertexGUI(Model::vertex_sptr);
 
     public slots:
         void addNodeCmd();
@@ -39,13 +40,16 @@ namespace View
 
         void addGraphCmd();
         void addGraphView(Model::graph_sptr graph);
+        void changeGraphCmd(QListWidgetItem* current, QListWidgetItem* previous);
         void changeGraphView(Model::graph_sptr graph);
+        void clearGraphCmd();
+        void clearGraphView();
 
         void connectNodesCmd();
         void connectNodesView(Model::vertex_sptr vertex);
         void deleteVertexCmd();
         void deleteVertexView(Model::vertex_sptr vertex);
-        void updateSelectedVertex(VertexGUI* vertex);
+        void updateSelectedVertex(VertexGUI* vertex, bool isSelected);
 
         void updateMinDistsCmd();
         void updateMaxDistsCmd();
@@ -54,16 +58,20 @@ namespace View
 
         void clearDistsItem();
 
+
         void setNewNodePos(NodeGUI* node, int x, int y);
         void verifyNodePos();
 
     private:
         Ui::GraphViewerGUIClass ui;
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();
-        std::vector<Model::graph_sptr> graphsList_;
-        std::vector<NodeGUI*> currentGraphNodesGUI_;
-        std::vector<VertexGUI*> currentGraphVerticesGUI_;
+        std::unordered_map<std::string, Model::graph_sptr> graphsMap_; 
+        std::unordered_map<std::string, NodeGUI*> currentGraphNodesGUI_;
+        std::unordered_map<Model::vertex_sptr, VertexGUI*> currentGraphVerticesGUI_;
+        //std::vector<NodeGUI*> currentGraphNodesGUI_; // could use unordered map with key = name so finding the item is faster
+        //std::vector<VertexGUI*> currentGraphVerticesGUI_; // could unordered use map with key = name so finding the item is faster
 
+        // std::unordered_map<node_sptr, std::vector<vertex_sptr>> verticesNeighbours_;
         NodeGUI* previousFirstConnectedNode_ = nullptr;
         NodeGUI* previousSecondConnectedNode_ = nullptr;
 

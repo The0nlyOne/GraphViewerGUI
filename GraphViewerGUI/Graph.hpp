@@ -42,6 +42,8 @@ namespace Model
 			addNodeAndChildren(root_);
 		}
 
+		void clearGraph();
+
 		void addNodeAndChildren(node_sptr node);
 		void addAllNodesAndVerticess(node_sptr parentNode, std::pair<node_sptr, int> pairNodeWeight);
 		void addVertices(node_sptr parentNode, node_sptr childNode, int weight);
@@ -98,17 +100,19 @@ namespace Model
 
 		void showMaxRoute(node_sptr node);  // does not work for some convexe/cyclique graph value?
 
+
 	signals:
 		void nodeAddedSignal(node_sptr node);
 		void nodeDeletedSignal(node_sptr node);
 		void vertexAddedSignal(vertex_sptr vertex);
 		void vertexDeletedSignal(vertex_sptr vertex);
+		void graphCleared();
 		void minDistUpdatedSignal();
 		void maxDistUpdatedSignal();
 
 	private:
 		std::string name_;
-		std::pair<std::vector<vertex_sptr>, int> knownVertices_ = { {}, 0 }; // debugging tool, to delete later
+		//std::pair<std::vector<vertex_sptr>, int> knownVertices_ = { {}, 0 }; // debugging tool, to delete later
 		node_sptr root_; // use unique_ptr instead?
 		std::unordered_set<node_sptr> nodes_; // using unordered set because most of its method are O(1) for my utilisation
 		std::unordered_set<node_sptr> leaves_; // and because when the graph is convexe, other containers will have duplicate.

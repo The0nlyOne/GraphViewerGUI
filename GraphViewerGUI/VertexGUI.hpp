@@ -33,12 +33,26 @@ namespace View
 		QGraphicsTextItem* getWeightGUI() { return weightGUI_; }
 		void setWeightGUI(QGraphicsTextItem* weight) { weightGUI_ = weight; }
 
+		/*
 		void mousePressEvent(QGraphicsSceneMouseEvent* event) {
 			emit vertexPressed(this);
 		}
+		*/
+
+		QVariant itemChange(GraphicsItemChange change, const QVariant& value) { // it is called too many time for what I am using it
+			if (change == QGraphicsItem::ItemSelectedChange) {
+				if (value.toBool()) { // is selected
+					emit isSelected(this, true);
+				}
+				else { // isNotSelected check if amount of selected Node > 2
+					emit isSelected(this, false);
+				}
+			}
+			return QGraphicsItem::itemChange(change, value);
+		}
 
 	signals:
-		void vertexPressed(VertexGUI* vertex);
+		void isSelected(VertexGUI* vertex, bool value);
 
 	private:
 		NodeGUI* previousNodeGUI_;
