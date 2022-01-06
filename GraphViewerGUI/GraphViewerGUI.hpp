@@ -62,8 +62,13 @@ namespace View
         Ui::GraphViewerGUIClass ui;
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();
         std::unordered_map<std::string, Model::graph_sptr> graphsMap_; 
-        std::unordered_map<std::string, NodeGUI*> currentGraphNodesGUI_;
-        std::unordered_map<Model::vertex_sptr, VertexGUI*> currentGraphVerticesGUI_;
+
+        // Not use this anymore
+        // std::unordered_map<std::string, NodeGUI*> currentGraphNodesGUI_;
+        //std::unordered_map<Model::vertex_sptr, VertexGUI*> currentGraphVerticesGUI_;
+        
+        std::unordered_map<std::string, std::unordered_map<std::string, NodeGUI*>> mapGraphsNodesGUI_;
+        std::unordered_map<std::string, std::unordered_map<Model::vertex_sptr, VertexGUI*>> mapGraphsVerticesGUI_;
 
         NodeGUI* previousFirstConnectedNode_ = nullptr;
         NodeGUI* previousSecondConnectedNode_ = nullptr;
