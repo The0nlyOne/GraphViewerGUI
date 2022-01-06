@@ -146,6 +146,7 @@ namespace View
             ui.secondNodeSelectedLineEdit->setText("");
         }
         delete nodeToDelete->getNameGUI();
+        delete nodeToDelete->getDistsGUI();
         delete nodeToDelete;
     }
 
