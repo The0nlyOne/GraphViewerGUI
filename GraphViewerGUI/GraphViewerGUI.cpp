@@ -18,10 +18,7 @@ namespace View
 
     void GraphViewerGUI::initialize()
     {
-        // graphBoardScene_->addEllipse(10, 10, 20, 20);
-
         setUpConnections();
-        //graphBoardView_->show();
     }
     
     void GraphViewerGUI::setUpConnections() {
@@ -36,6 +33,7 @@ namespace View
         QObject::connect(ui.updateMaxDistButton, SIGNAL(clicked()), this, SLOT(updateMaxDistsCmd()));
         QObject::connect(ui.clearDistsValuesButton, SIGNAL(clicked()), this, SLOT(clearDistsItem()));
         QObject::connect(ui.clearGraphButton, SIGNAL(clicked()), this, SLOT(clearGraphCmd()));
+        QObject::connect(ui.deleteGraphButton, SIGNAL(clicked()), this, SLOT(removeGraphCmd()));
 
         // listConnection
         QObject::connect(ui.graphsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
@@ -43,30 +41,30 @@ namespace View
 
         // connect the model to the view
         QObject::connect(graphViewer_, &Model::GraphViewer::graphAddedSignal, this, &GraphViewerGUI::addGraphView);
-        //QObject::connect(graphViewer_, &Model::GraphViewer::graphRemovedSignal, this, &GraphViewerGUI::removeProfileAction);
+        QObject::connect(graphViewer_, &Model::GraphViewer::graphRemovedSignal, this, &GraphViewerGUI::removeGraphView);
         QObject::connect(graphViewer_, &Model::GraphViewer::graphChangedSignal, this, &GraphViewerGUI::changeGraphView);
     }
 
     void GraphViewerGUI::addGraphCmd()
     {
-        if (ui.graphNamelineEdit->text() != "") {
-            std::string name = ui.graphNamelineEdit->text().toStdString();
-            Model::graph_sptr graphToAdd = std::make_shared<Model::Graph>(name);
-            std::shared_ptr<Model::Command> addGraph = std::make_shared<Model::AddGraph>(graphViewer_, graphToAdd);
+        if (ui.graphNamelineEdit->text() == "") { return; }
 
-            QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
-            QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
-            QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
-            QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
-            QObject::connect(graphToAdd.get(), &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
-            QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
-            QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
+        std::string name = ui.graphNamelineEdit->text().toStdString();
+        Model::graph_sptr graphToAdd = std::make_shared<Model::Graph>(name);
+        std::shared_ptr<Model::Command> addGraph = std::make_shared<Model::AddGraph>(graphViewer_, graphToAdd);
 
-            try {
-                invoker_->executeCommand(addGraph);
-            }
-            catch (Model::SameName& error) {} // does not add the graph if it has the same name than one already existing
+        QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
+
+        try {
+            invoker_->executeCommand(addGraph);
         }
+        catch (Model::SameName& error) {} // does not add the graph if it has the same name than one already existing
     }
 
     void GraphViewerGUI::addGraphView(Model::graph_sptr graph) {
@@ -99,22 +97,22 @@ namespace View
     void GraphViewerGUI::changeGraphView(Model::graph_sptr graph) {
         clearGUI();
 
-        if (graph) {
-            std::string graphName = graph->getName();
-            if (mapGraphsNodesGUI_[graphName].size() >= 1) {
-                for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graphName]) {
-                    NodeGUI* nodeGUI = pairNameAndNodeGUI.second;
-                    nodeGUI->setBrush(QBrush(Qt::darkCyan));
-                    graphBoardScene_->addItem(nodeGUI);
-                    graphBoardScene_->addItem(nodeGUI->getNameGUI());
-                    graphBoardScene_->addItem(nodeGUI->getDistsGUI());
-                }
-            }
+        if (!graph) { return; }
 
-            if (mapGraphsVerticesGUI_[graphName].size() >= 1) {
-                for (auto&& pairVertexSptrAndVertexGUI : mapGraphsVerticesGUI_[graphName]) {
-                    graphBoardScene_->addItem(pairVertexSptrAndVertexGUI.second);
-                }
+        std::string graphName = graph->getName();
+        if (mapGraphsNodesGUI_[graphName].size() >= 1) {
+            for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graphName]) {
+                NodeGUI* nodeGUI = pairNameAndNodeGUI.second;
+                nodeGUI->setBrush(QBrush(Qt::darkCyan));
+                graphBoardScene_->addItem(nodeGUI);
+                graphBoardScene_->addItem(nodeGUI->getNameGUI());
+                graphBoardScene_->addItem(nodeGUI->getDistsGUI());
+            }
+        }
+
+        if (mapGraphsVerticesGUI_[graphName].size() >= 1) {
+            for (auto&& pairVertexSptrAndVertexGUI : mapGraphsVerticesGUI_[graphName]) {
+                graphBoardScene_->addItem(pairVertexSptrAndVertexGUI.second);
             }
         }
         // load previous graph info
@@ -154,27 +152,36 @@ namespace View
         for (auto&& item : listGUI) {
             graphBoardScene_->removeItem(item);;
         }
+    }
 
+    void GraphViewerGUI::removeGraphCmd() {
+        if (!graphViewer_->getCurrentGraph()) { return; }
+        std::shared_ptr<Model::Command> removeGraph = std::make_shared<Model::RemoveGraph>(graphViewer_, graphViewer_->getCurrentGraph());
+        invoker_->executeCommand(removeGraph);
+    }
 
+    void GraphViewerGUI::removeGraphView(Model::graph_sptr graph) {
+        if (!graph) { return; }
+        ui.graphsListWidget->takeItem(ui.graphsListWidget->currentRow());
+        graphsMap_.erase(graph->getName());
     }
 
     void GraphViewerGUI::addNodeCmd() {
         // Verify that there can't be 2 Node with same name here.
-        if (graphViewer_->getCurrentGraph() != nullptr) {
-            if (ui.nodeNameLineEdit->text() != "") {
-                // getting needed info
-                std::string name = ui.nodeNameLineEdit->text().toStdString();
-                int value = ui.nodeValueSpinBox->value();
+        if (!graphViewer_->getCurrentGraph()) { return; }
 
-                Model::node_sptr nodeToAdd = std::make_shared<Model::Node>(name, value);
-                std::shared_ptr<Model::Command> addNode = std::make_shared<Model::AddNode>(graphViewer_->getCurrentGraph(), nodeToAdd);
-                invoker_->executeCommand(addNode);
-            }
+        if (ui.nodeNameLineEdit->text() != "") {
+            // getting needed info
+            std::string name = ui.nodeNameLineEdit->text().toStdString();
+            int value = ui.nodeValueSpinBox->value();
+
+            Model::node_sptr nodeToAdd = std::make_shared<Model::Node>(name, value);
+            std::shared_ptr<Model::Command> addNode = std::make_shared<Model::AddNode>(graphViewer_->getCurrentGraph(), nodeToAdd);
+            invoker_->executeCommand(addNode);
         }
     }
 
     void GraphViewerGUI::addNodeView(Model::node_sptr node) {
-        
         // creating the node and setting its position
         NodeGUI* nodeGUI = new NodeGUI(node);
         nodeGUI->setX(newNodePos_.x());
@@ -201,13 +208,13 @@ namespace View
     }
 
     void GraphViewerGUI::deleteNodeCmd() {
-        if (ui.nodeNameLineEdit->text() != "") {
-            std::string name = ui.nodeNameLineEdit->text().toStdString();
-            NodeGUI* nodeToDelete = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][name];
-            if (nodeToDelete) {
-                std::shared_ptr<Model::Command> removeNode = std::make_shared<Model::removeNode>(graphViewer_->getCurrentGraph(), nodeToDelete->getNode());
-                invoker_->executeCommand(removeNode);
-            }
+        if (ui.nodeNameLineEdit->text() == "") { return; }
+
+        std::string name = ui.nodeNameLineEdit->text().toStdString();
+        NodeGUI* nodeToDelete = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][name];
+        if (nodeToDelete) {
+            std::shared_ptr<Model::Command> removeNode = std::make_shared<Model::removeNode>(graphViewer_->getCurrentGraph(), nodeToDelete->getNode());
+            invoker_->executeCommand(removeNode);
         }
     }
 
@@ -236,38 +243,38 @@ namespace View
     }
 
     void GraphViewerGUI::manageNodesSelection(NodeGUI* nodeGUI) {
-        if (nodeGUI) {
-            ui.nodeNameLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-            ui.rootGraphLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-            ui.nodeValueSpinBox->setValue(nodeGUI->getNode()->getValue());
-            switch (selectedNodeCount_)
-            {
-            case 0:
-                selectedNodeCount_++;
-                ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-                previousFirstConnectedNode_ = nodeGUI;
-                break;
-            case 1:
-                selectedNodeCount_++;
-                ui.secondNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-                previousSecondConnectedNode_ = nodeGUI;
-                break;
-            case 2:
-                selectedNodeCount_ = 1;
-                ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-                ui.secondNodeSelectedLineEdit->setText("");
-                if (previousSecondConnectedNode_) // to verify that it is not deleted
-                    previousSecondConnectedNode_->setBrush(QBrush(Qt::darkCyan));
-                if (previousFirstConnectedNode_)
-                    previousFirstConnectedNode_->setBrush(QBrush(Qt::darkCyan));
-                previousFirstConnectedNode_ = nodeGUI;
-                break;
-            default:
-                break;
-            }
-            nodeGUI->setBrush(QBrush(Qt::red));
-            update();
+        if (!nodeGUI) { return; }
+
+        ui.nodeNameLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+        ui.rootGraphLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+        ui.nodeValueSpinBox->setValue(nodeGUI->getNode()->getValue());
+        switch (selectedNodeCount_)
+        {
+        case 0:
+            selectedNodeCount_++;
+            ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+            previousFirstConnectedNode_ = nodeGUI;
+            break;
+        case 1:
+            selectedNodeCount_++;
+            ui.secondNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+            previousSecondConnectedNode_ = nodeGUI;
+            break;
+        case 2:
+            selectedNodeCount_ = 1;
+            ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+            ui.secondNodeSelectedLineEdit->setText("");
+            if (previousSecondConnectedNode_) // to verify that it is not deleted
+                previousSecondConnectedNode_->setBrush(QBrush(Qt::darkCyan));
+            if (previousFirstConnectedNode_)
+                previousFirstConnectedNode_->setBrush(QBrush(Qt::darkCyan));
+            previousFirstConnectedNode_ = nodeGUI;
+            break;
+        default:
+            break;
         }
+        nodeGUI->setBrush(QBrush(Qt::red));
+        update();
     }
 
     void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
@@ -423,7 +430,8 @@ namespace View
     }
 
     void GraphViewerGUI::updateMinDistsCmd() {
-        std::string rootName = ui.nodeNameLineEdit->text().toStdString();
+        std::string rootName = ui.rootGraphLineEdit->text().toStdString();
+        if (rootName == "") { return; }
         NodeGUI* rootGUI = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][rootName];
         if (rootGUI) {
             graphViewer_->getCurrentGraph()->updateMinDist(rootGUI->getNode());
@@ -431,7 +439,9 @@ namespace View
     }
 
     void GraphViewerGUI::updateMaxDistsCmd() {
-        std::string rootName = ui.nodeNameLineEdit->text().toStdString();
+        std::string rootName = ui.rootGraphLineEdit->text().toStdString();
+        if (rootName == "") { return; }
+
         Model::node_sptr root = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][rootName]->getNode();
         if (root) {
             graphViewer_->getCurrentGraph()->updateMaxDist(root);
@@ -439,6 +449,7 @@ namespace View
     }
 
     void GraphViewerGUI::clearDistsItem() {
+        if (!graphViewer_->getCurrentGraph()) { return; }
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
             if (nodeGUI->getDistsGUI()) {

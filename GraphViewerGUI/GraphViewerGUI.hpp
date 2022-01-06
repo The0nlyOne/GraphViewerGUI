@@ -41,6 +41,8 @@ namespace View
         void changeGraphView(Model::graph_sptr graph);
         void clearGraphCmd();
         void clearGraphView();
+        void removeGraphCmd();
+        void removeGraphView(Model::graph_sptr);
 
         void connectNodesCmd();
         void connectNodesView(Model::vertex_sptr vertex);
@@ -73,8 +75,8 @@ namespace View
         VertexGUI* selectedVertex_ = nullptr;
 
         Model::GraphViewer* graphViewer_ = Model::GraphViewer::getGraphViewer();
-        QGraphicsScene* graphBoardScene_;
-        QGraphicsView* graphBoardView_;
+        QGraphicsScene* graphBoardScene_ = nullptr;
+        QGraphicsView* graphBoardView_ = nullptr;
         QPoint newNodePos_;
 
         int selectedNodeCount_ = 0; // to know the first and second Node Selected
