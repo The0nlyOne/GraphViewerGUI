@@ -64,12 +64,6 @@ namespace View
 
             try {
                 invoker_->executeCommand(addGraph);
-                /*
-                if (ui.graphsListWidget->count() == 1) {// if it is the first graph
-                    std::shared_ptr<Model::Command> changeGraph = std::make_shared<Model::ChangeGraph>(graphViewer_, graphToAdd);
-                    invoker_->executeCommand(changeGraph);
-                }
-                */
             }
             catch (Model::SameName& error) {} // does not add the graph if it has the same name than one already existing
         }
@@ -83,6 +77,8 @@ namespace View
         if (graphsList->count() == 1) { // set the first graph as current if there are no graph
             graphsList->setCurrentItem(graphsList->item(0));
         }
+
+        ui.graphNamelineEdit->setText("");
     }
 
     void GraphViewerGUI::changeGraphCmd(QListWidgetItem* current, QListWidgetItem* previous) {

@@ -74,7 +74,7 @@ namespace View
 		void nodeSelected(NodeGUI* node);
 
 	private:
-		Model::node_sptr node_;
+		Model::node_sptr node_ = nullptr;
 		int radius_ = 9;
 		int diameter_ = radius_ * 2;
 		int nodeNameDistance_ = 20;

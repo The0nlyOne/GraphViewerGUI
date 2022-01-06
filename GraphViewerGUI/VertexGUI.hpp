@@ -49,9 +49,9 @@ namespace View
 		void isSelected(VertexGUI* vertex, bool value);
 
 	private:
-		NodeGUI* previousNodeGUI_;
-		NodeGUI* nodeGUI_;
-		QGraphicsTextItem* weightGUI_;
+		NodeGUI* previousNodeGUI_ = nullptr;
+		NodeGUI* nodeGUI_ = nullptr;
+		QGraphicsTextItem* weightGUI_ = nullptr;
 		Model::vertex_sptr vertex_;
 	};
 
