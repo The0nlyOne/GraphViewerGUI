@@ -26,6 +26,7 @@ namespace View
         GraphViewerGUI(QWidget* parent = Q_NULLPTR);
         void initialize();
         void setUpConnections();
+        void clearGUI();
 
     public slots:
         void addNodeCmd();

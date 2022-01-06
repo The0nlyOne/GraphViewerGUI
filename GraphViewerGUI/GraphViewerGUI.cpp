@@ -101,11 +101,26 @@ namespace View
     }
 
     void GraphViewerGUI::changeGraphView(Model::graph_sptr graph) {
-        clearGraphView();
-        for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graph->getName()]) { // currentGraphNodesGUI_ & currentGraphVerticesGUI_ is cleared
-            graphBoardScene_->addItem(pairNameAndNodeGUI.second);
-        }
+        clearGUI();
 
+        if (graph) {
+            std::string graphName = graph->getName();
+            if (mapGraphsNodesGUI_[graphName].size() >= 1) {
+                for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graphName]) {
+                    NodeGUI* nodeGUI = pairNameAndNodeGUI.second;
+                    nodeGUI->setBrush(QBrush(Qt::darkCyan));
+                    graphBoardScene_->addItem(nodeGUI);
+                    graphBoardScene_->addItem(nodeGUI->getNameGUI());
+                    graphBoardScene_->addItem(nodeGUI->getDistsGUI());
+                }
+            }
+
+            if (mapGraphsVerticesGUI_[graphName].size() >= 1) {
+                for (auto&& pairVertexSptrAndVertexGUI : mapGraphsVerticesGUI_[graphName]) {
+                    graphBoardScene_->addItem(pairVertexSptrAndVertexGUI.second);
+                }
+            }
+        }
         // load previous graph info
     }
 
@@ -116,6 +131,13 @@ namespace View
 
     void GraphViewerGUI::clearGraphView() {
         // it is not a command so we can't cancel
+        clearGUI();
+
+        mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()].clear();
+        mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()].clear();
+    }
+
+    void GraphViewerGUI::clearGUI() {
         ui.nodeNameLineEdit->setText("");
         ui.nodeValueSpinBox->setValue(0);
         ui.firstNodeSelectedLineEdit->setText("");
@@ -125,13 +147,17 @@ namespace View
         ui.rootGraphLineEdit->setText("");
 
         selectedNodeCount_ = 0;
-        graphBoardScene_->clear();
         selectedVertex_ = nullptr;
-        mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()].clear();
-        mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()].clear();
 
         NodeGUI* previousFirstConnectedNode_ = nullptr;
         NodeGUI* previousSecondConnectedNode_ = nullptr;
+
+        QList<QGraphicsItem*> listGUI = graphBoardScene_->items();
+        for (auto&& item : listGUI) {
+            graphBoardScene_->removeItem(item);;
+        }
+
+
     }
 
     void GraphViewerGUI::addNodeCmd() {
@@ -171,6 +197,7 @@ namespace View
         graphBoardScene_->addItem(nodeNameGUI);
         mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][node->getName()] = nodeGUI;
         
+        ui.nodeNameLineEdit->setText("");
         // update the position of next Node
         verifyNodePos();
     }
