@@ -126,7 +126,9 @@ namespace View
 
     void GraphViewerGUI::clearGraphCmd() {
         // it is not a command so we can't cancel
-        graphViewer_->getCurrentGraph()->clearGraph();
+        if (graphViewer_->getCurrentGraph()) {
+            graphViewer_->getCurrentGraph()->clearGraph();
+        }
     }
 
     void GraphViewerGUI::clearGraphView() {
@@ -401,9 +403,12 @@ namespace View
         ui.vertexSelectedLineEdit->setText("");
 
         VertexGUI* vertexToDelete = mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex];
-        graphBoardScene_->removeItem(vertexToDelete);
-        mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()].erase(vertex);
-        delete vertexToDelete;
+        if (vertexToDelete) {
+            graphBoardScene_->removeItem(vertexToDelete);
+            mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()].erase(vertex);
+            delete vertexToDelete;
+            selectedVertex_ = nullptr;
+        }
     }
 
     void GraphViewerGUI::updateSelectedVertex(VertexGUI* vertexGUI, bool isSelected) {

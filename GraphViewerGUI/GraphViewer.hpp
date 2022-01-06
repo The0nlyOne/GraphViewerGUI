@@ -56,7 +56,7 @@ namespace Model
 	private:
 		GraphViewer() = default;
 		std::vector<graph_sptr> graphsVector_;
-		graph_sptr currentGraph_;
+		graph_sptr currentGraph_ =  nullptr;
 	};
 
 }
