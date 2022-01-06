@@ -32,6 +32,9 @@ namespace View
         QObject::connect(ui.deleteNodeButton, SIGNAL(clicked()), this, SLOT(deleteNodeCmd()));
         QObject::connect(ui.connectNodesButton, SIGNAL(clicked()), this, SLOT(connectNodesCmd()));
         QObject::connect(ui.deleteVertexButton, SIGNAL(clicked()), this, SLOT(deleteVertexCmd()));
+        QObject::connect(ui.updateMinDistButton, SIGNAL(clicked()), this, SLOT(updateMinDistsCmd()));
+        QObject::connect(ui.updateMaxDistButton, SIGNAL(clicked()), this, SLOT(updateMaxDistsCmd()));
+        QObject::connect(ui.clearDistsValuesButton, SIGNAL(clicked()), this, SLOT(clearDistsItem()));
 
         // connect the model to the view
         QObject::connect(graphViewer_, &Model::GraphViewer::graphAddedSignal, this, &GraphViewerGUI::addGraphView);
@@ -50,7 +53,8 @@ namespace View
             QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
             QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
             QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
-            //QObject::connect(graphToAdd.get(), &Model::Graph::nodeShowed, this, &GraphViewerGUI::updateBudgetAction);
+            QObject::connect(graphToAdd.get(), &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
+            QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
 
             try {
                 invoker_->executeCommand(addGraph);
@@ -146,35 +150,38 @@ namespace View
     }
 
     void GraphViewerGUI::manageNodesSelection(NodeGUI* nodeGUI) {
-        ui.nodeNameLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-        ui.nodeValueSpinBox->setValue(nodeGUI->getNode()->getValue());
-        switch (selectedNodeCount_)
-        {
-        case 0:
-            selectedNodeCount_++;
-            ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-            previousFirstConnectedNode_ = nodeGUI;
-            break;
-        case 1:
-            selectedNodeCount_++;
-            ui.secondNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-            previousSecondConnectedNode_ = nodeGUI;
-            break;
-        case 2:
-            selectedNodeCount_ = 1;
-            ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
-            ui.secondNodeSelectedLineEdit->setText("");
-            if (previousSecondConnectedNode_) // to verify that it is not deleted
-                previousSecondConnectedNode_->setBrush(QBrush(Qt::darkCyan));
-            if (previousFirstConnectedNode_)
-                previousFirstConnectedNode_->setBrush(QBrush(Qt::darkCyan));
-            previousFirstConnectedNode_ = nodeGUI;
-            break;
-        default:
-            break;
+        if (nodeGUI) {
+            ui.nodeNameLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+            ui.rootGraphLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+            ui.nodeValueSpinBox->setValue(nodeGUI->getNode()->getValue());
+            switch (selectedNodeCount_)
+            {
+            case 0:
+                selectedNodeCount_++;
+                ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+                previousFirstConnectedNode_ = nodeGUI;
+                break;
+            case 1:
+                selectedNodeCount_++;
+                ui.secondNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+                previousSecondConnectedNode_ = nodeGUI;
+                break;
+            case 2:
+                selectedNodeCount_ = 1;
+                ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
+                ui.secondNodeSelectedLineEdit->setText("");
+                if (previousSecondConnectedNode_) // to verify that it is not deleted
+                    previousSecondConnectedNode_->setBrush(QBrush(Qt::darkCyan));
+                if (previousFirstConnectedNode_)
+                    previousFirstConnectedNode_->setBrush(QBrush(Qt::darkCyan));
+                previousFirstConnectedNode_ = nodeGUI;
+                break;
+            default:
+                break;
+            }
+            nodeGUI->setBrush(QBrush(Qt::red));
+            update();
         }
-        nodeGUI->setBrush(QBrush(Qt::red));
-        update();
     }
 
     NodeGUI* GraphViewerGUI::getNodeGUI(std::string name) {
@@ -189,7 +196,11 @@ namespace View
     void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
         newNodePos_.setX(x); newNodePos_.setY(y);
         nodeGUI->getNameGUI()->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y());
+        if (nodeGUI->getDistsGUI()) {
+            nodeGUI->getDistsGUI()->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
+        }
         verifyNodePos();
+
         std::vector<Model::vertex_sptr> neighbourVertices = graphViewer_->getCurrentGraph()->getVerticesNeighbours()[nodeGUI->getNode()];
         std::vector<Model::node_sptr> parentNodes = graphViewer_->getCurrentGraph()->getParentNodes()[nodeGUI->getNode()];
         NodeGUI* secondNode;
@@ -288,22 +299,9 @@ namespace View
         VertexGUI* vertexGUI = new VertexGUI(vertex, firstNode, secondNode);
 
         //creating the vertex weight GUI
-        
         QGraphicsTextItem* vertexWeightGUI = new QGraphicsTextItem(QString::number(vertex->getWeight()), vertexGUI);
         vertexWeightGUI->setPos(secondNode->pos());
         vertexGUI->setWeightGUI(vertexWeightGUI);
-        /*
-        int posX = firstNode->x() / 2;
-        int posY = firstNode->y() / 2;
-        if (secondNode->x() > firstNode->x()) {
-            posX = secondNode->x() / 2;
-        }
-        if (secondNode->y() > firstNode->y()) {
-            posY = secondNode->y() / 2;
-        }
-
-        vertexWeightGUI->setPos(posX, posY);
-        */
 
         // I set the line in the constructor
         vertexGUI->setFlag(QGraphicsItem::ItemIsSelectable);
@@ -321,6 +319,7 @@ namespace View
             deleteVertex = std::make_shared<Model::DisconnectVertex>(graphViewer_->getCurrentGraph(),
                 selectedVertex_->getVertex());
             invoker_->executeCommand(deleteVertex);
+            selectedVertex_ = nullptr;
         }
     }
 
@@ -345,4 +344,50 @@ namespace View
         ui.vertexWeightSpinBox->setValue(vertexGUI->getVertex()->getWeight());
     }
 
+    void GraphViewerGUI::updateMinDistsCmd() {
+        std::string rootName = ui.nodeNameLineEdit->text().toStdString();
+        Model::node_sptr root = getNodeGUI(rootName)->getNode();
+        if (root) {
+            graphViewer_->getCurrentGraph()->updateMinDist(root);
+        }
+    }
+
+    void GraphViewerGUI::updateMaxDistsCmd() {
+        std::string rootName = ui.nodeNameLineEdit->text().toStdString();
+        Model::node_sptr root = getNodeGUI(rootName)->getNode();
+        if (root) {
+            graphViewer_->getCurrentGraph()->updateMaxDist(root);
+        }
+    }
+
+    void GraphViewerGUI::clearDistsItem() {
+        for (auto&& nodeGUI : currentGraphNodesGUI_) {
+            if (nodeGUI->getDistsGUI()) {
+                delete nodeGUI->getDistsGUI();
+                nodeGUI->setDistsGUI(nullptr);
+            }
+        }
+    }
+
+    void GraphViewerGUI::updateMinDistsView() {
+        clearDistsItem();
+        for (auto&& nodeGUI : currentGraphNodesGUI_) {
+            QGraphicsTextItem* minDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMin()));
+            nodeGUI->setDistsGUI(minDist);
+            minDist->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
+
+            graphBoardScene_->addItem(minDist);
+        }
+    }
+
+    void GraphViewerGUI::updateMaxDistsView() {
+        clearDistsItem();
+        for (auto&& nodeGUI : currentGraphNodesGUI_) {
+            QGraphicsTextItem* maxDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMax()));
+            nodeGUI->setDistsGUI(maxDist);
+            maxDist->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
+
+            graphBoardScene_->addItem(maxDist);
+        }
+    }
 }

@@ -59,6 +59,10 @@ namespace View
 
 		void setNameGUI(QGraphicsTextItem* nameGUI) { nameGUI_ = nameGUI; }
 		QGraphicsTextItem* getNameGUI() {  return nameGUI_; }
+
+		void setDistsGUI(QGraphicsTextItem* distsGUI) { distsGUI_ = distsGUI; }
+		QGraphicsTextItem* getDistsGUI() { return distsGUI_; }
+
 		int getNodeNameDist() { return nodeNameDistance_; }
 		void setNodeNameDist(int dist) { nodeNameDistance_ = dist; }
 
@@ -75,6 +79,7 @@ namespace View
 		int diameter_ = radius_ * 2;
 		int nodeNameDistance_ = 20;
 		QGraphicsTextItem* nameGUI_ = nullptr;
+		QGraphicsTextItem* distsGUI_ = nullptr;
 		QBrush brush_ = QBrush(Qt::darkCyan);
 	};
 

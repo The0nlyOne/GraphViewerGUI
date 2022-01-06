@@ -84,6 +84,8 @@ namespace Model
 		void minHeap(std::vector<vertex_sptr>* vector);
 
 		node_sptr getRoot() { return root_; }
+		void  setRoot(node_sptr root) { root_ = root; }
+
 		std::unordered_set<node_sptr> getNodes() { return nodes_; }
 		std::unordered_set<node_sptr> getLeaves() { return leaves_; }
 		std::vector<vertex_sptr> getVertices() { return vertices_; }

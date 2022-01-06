@@ -47,6 +47,13 @@ namespace View
         void deleteVertexView(Model::vertex_sptr vertex);
         void updateSelectedVertex(VertexGUI* vertex);
 
+        void updateMinDistsCmd();
+        void updateMaxDistsCmd();
+        void updateMinDistsView();
+        void updateMaxDistsView();
+
+        void clearDistsItem();
+
         void setNewNodePos(NodeGUI* node, int x, int y);
         void verifyNodePos();
 
