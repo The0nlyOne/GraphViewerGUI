@@ -33,12 +33,6 @@ namespace View
 		QGraphicsTextItem* getWeightGUI() { return weightGUI_; }
 		void setWeightGUI(QGraphicsTextItem* weight) { weightGUI_ = weight; }
 
-		/*
-		void mousePressEvent(QGraphicsSceneMouseEvent* event) {
-			emit vertexPressed(this);
-		}
-		*/
-
 		QVariant itemChange(GraphicsItemChange change, const QVariant& value) { // it is called too many time for what I am using it
 			if (change == QGraphicsItem::ItemSelectedChange) {
 				if (value.toBool()) { // is selected

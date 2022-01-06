@@ -27,10 +27,6 @@ namespace View
         void initialize();
         void setUpConnections();
 
-        //NodeGUI* getNodeGUI(std::string name);
-        //Model::graph_sptr getGraph(std::string name);
-        //VertexGUI* findVertexGUI(Model::vertex_sptr);
-
     public slots:
         void addNodeCmd();
         void addNodeView(Model::node_sptr node);
@@ -68,10 +64,7 @@ namespace View
         std::unordered_map<std::string, Model::graph_sptr> graphsMap_; 
         std::unordered_map<std::string, NodeGUI*> currentGraphNodesGUI_;
         std::unordered_map<Model::vertex_sptr, VertexGUI*> currentGraphVerticesGUI_;
-        //std::vector<NodeGUI*> currentGraphNodesGUI_; // could use unordered map with key = name so finding the item is faster
-        //std::vector<VertexGUI*> currentGraphVerticesGUI_; // could unordered use map with key = name so finding the item is faster
 
-        // std::unordered_map<node_sptr, std::vector<vertex_sptr>> verticesNeighbours_;
         NodeGUI* previousFirstConnectedNode_ = nullptr;
         NodeGUI* previousSecondConnectedNode_ = nullptr;
 

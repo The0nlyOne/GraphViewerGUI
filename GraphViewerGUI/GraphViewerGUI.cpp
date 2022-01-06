@@ -93,15 +93,6 @@ namespace View
             invoker_->executeCommand(changeGraph);
         }
     }
-    /*
-    Model::graph_sptr GraphViewerGUI::getGraph(std::string name) {
-        for (auto&& graph : graphsList_) {
-            if (graph->getName() == name) {
-                return graph;
-            }
-        }
-        return nullptr;
-    }*/
 
     void GraphViewerGUI::changeGraphView(Model::graph_sptr graph) {
         // remake affichage of Node
@@ -186,14 +177,6 @@ namespace View
     }
 
     void GraphViewerGUI::deleteNodeView(Model::node_sptr node) {
-        /*
-        for (int i = 0; i < currentGraphNodesGUI_.size(); i++) {
-            if (currentGraphNodesGUI_[i]->getNode() == node) {
-                nodeToDelete = currentGraphNodesGUI_[i];
-                currentGraphNodesGUI_.erase(currentGraphNodesGUI_.begin() + i);
-            }
-        }
-        */
         NodeGUI* nodeToDelete = currentGraphNodesGUI_[node->getName()];
         currentGraphNodesGUI_.erase(node->getName());
         graphBoardScene_->removeItem(nodeToDelete);
@@ -251,17 +234,6 @@ namespace View
             update();
         }
     }
-
-    /*
-    NodeGUI* GraphViewerGUI::getNodeGUI(std::string name) {
-        for (auto&& nodeGUI : currentGraphNodesGUI_) {
-            if (nodeGUI->getNode()->getName() == name) {
-                return nodeGUI;
-            }
-        }
-        return nullptr;
-    }
-    */
 
     void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
         newNodePos_.setX(x); newNodePos_.setY(y);
@@ -338,23 +310,6 @@ namespace View
         }
     }
 
-    /*
-    VertexGUI* GraphViewerGUI::findVertexGUI(Model::vertex_sptr vertex) {
-		std::unordered_set<VertexGUI*>::const_iterator vertexSptrIterator = currentGraphVerticesGUI_.find(vertex);
-		return (vertexSptrIterator == currentGraphVerticesGUI_.end()) ? nullptr : *nodeSptrIterator;
-	}
-
-  
-    VertexGUI* GraphViewerGUI::findVertexGUI(Model::vertex_sptr vertex) {
-        for (auto&& existingVertex : currentGraphVerticesGUI_) {
-            if (existingVertex->getVertex() == vertex) {
-                return existingVertex;
-            }
-        }
-        return nullptr;
-    }
-    */
-
     void GraphViewerGUI::connectNodesCmd() {
         std::string firstNodeName = ui.firstNodeSelectedLineEdit->text().toStdString();
         std::string secondNodeName = ui.secondNodeSelectedLineEdit->text().toStdString();
@@ -390,7 +345,9 @@ namespace View
         graphBoardScene_->addItem(vertexGUI);
         currentGraphVerticesGUI_[vertex] = vertexGUI;
 
-        selectedNodeCount_ = 2;
+        ui.vertexWeightSpinBox->setValue(1); // reinitialize the weight spinbox
+        // set the currentselectednodegui (secondNode) to unselected so we can chain connection with the manageSelection
+        secondNode->setSelected(false);
     }
 
     void GraphViewerGUI::deleteVertexCmd() {
@@ -404,18 +361,6 @@ namespace View
     }
 
     void GraphViewerGUI::deleteVertexView(Model::vertex_sptr vertex) {
-        /*
-        VertexGUI* vertexToDelete;
-        for (int i = 0; i < currentGraphVerticesGUI_.size(); i++) {
-            if (currentGraphVerticesGUI_[i]->getVertex() == vertex) {
-                vertexToDelete = currentGraphVerticesGUI_[i];
-                currentGraphVerticesGUI_.erase(currentGraphVerticesGUI_.begin() + i);
-                graphBoardScene_->removeItem(vertexToDelete);
-                break;
-            }
-        }
-        delete vertexToDelete;
-        */
         ui.vertexSelectedLineEdit->setText("");
 
         VertexGUI* vertexToDelete = currentGraphVerticesGUI_[vertex];
