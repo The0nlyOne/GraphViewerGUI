@@ -44,7 +44,7 @@ namespace View
 				}
 				else { // isNotSelected check if amount of selected Node > 2
 					if (brush_.color() != Qt::red) {
-						brush_ = QBrush(Qt::black);
+						brush_ = QBrush(Qt::darkCyan);
 						update();
 					}
 				}
@@ -57,6 +57,11 @@ namespace View
 			emit nodeReleased(this, this->x(), this->y()); // to change 
 		}
 
+		void setNameGUI(QGraphicsTextItem* nameGUI) { nameGUI_ = nameGUI; }
+		QGraphicsTextItem* getNameGUI() {  return nameGUI_; }
+		int getNodeNameDist() { return nodeNameDistance_; }
+		void setNodeNameDist(int dist) { nodeNameDistance_ = dist; }
+
 		void setBrush(QBrush brush) { brush_ = brush; }
 		QBrush getBrush() { return brush_; }
 
@@ -66,9 +71,11 @@ namespace View
 
 	private:
 		Model::node_sptr node_;
-		int radius_ = 7;
+		int radius_ = 9;
 		int diameter_ = radius_ * 2;
-		QBrush brush_ = QBrush(Qt::black);
+		int nodeNameDistance_ = 20;
+		QGraphicsTextItem* nameGUI_ = nullptr;
+		QBrush brush_ = QBrush(Qt::darkCyan);
 	};
 
 }

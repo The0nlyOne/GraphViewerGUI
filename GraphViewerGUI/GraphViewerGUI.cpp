@@ -81,10 +81,7 @@ namespace View
 
                 Model::node_sptr nodeToAdd = std::make_shared<Model::Node>(name, value);
                 std::shared_ptr<Model::Command> addNode = std::make_shared<Model::AddNode>(graphViewer_->getCurrentGraph(), nodeToAdd);
-                try {
-                    invoker_->executeCommand(addNode);
-                }
-                catch (Model::SameName& error) {} // does not add the Node if it has the same name than one already existing
+                invoker_->executeCommand(addNode);
             }
         }
     }
@@ -98,11 +95,17 @@ namespace View
         nodeGUI->setFlag(QGraphicsItem::ItemIsMovable);
         nodeGUI->setFlag(QGraphicsItem::ItemIsSelectable);
         
+        // creating text
+        QGraphicsTextItem* nodeNameGUI = new QGraphicsTextItem(QString::fromStdString(node->getName()));
+        nodeGUI->setNameGUI(nodeNameGUI);
+        nodeNameGUI->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y());
+
         // connect signals
         QObject::connect(nodeGUI, &NodeGUI::nodeReleased, this, &GraphViewerGUI::setNewNodePos);
         QObject::connect(nodeGUI, &NodeGUI::nodeSelected, this, &GraphViewerGUI::manageNodesSelection);
 
         graphBoardScene_->addItem(nodeGUI);
+        graphBoardScene_->addItem(nodeNameGUI);
         currentGraphNodesGUI_.push_back(nodeGUI);
         
         // update the position of next Node
@@ -138,6 +141,8 @@ namespace View
         else if (nodeToDelete->getNode()->getName() == ui.secondNodeSelectedLineEdit->text().toStdString()) {
             ui.secondNodeSelectedLineEdit->setText("");
         }
+        delete nodeToDelete->getNameGUI();
+        delete nodeToDelete;
     }
 
     void GraphViewerGUI::manageNodesSelection(NodeGUI* nodeGUI) {
@@ -160,9 +165,9 @@ namespace View
             ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
             ui.secondNodeSelectedLineEdit->setText("");
             if (previousSecondConnectedNode_) // to verify that it is not deleted
-                previousSecondConnectedNode_->setBrush(QBrush(Qt::black));
+                previousSecondConnectedNode_->setBrush(QBrush(Qt::darkCyan));
             if (previousFirstConnectedNode_)
-                previousFirstConnectedNode_->setBrush(QBrush(Qt::black));
+                previousFirstConnectedNode_->setBrush(QBrush(Qt::darkCyan));
             previousFirstConnectedNode_ = nodeGUI;
             break;
         default:
@@ -183,6 +188,7 @@ namespace View
 
     void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
         newNodePos_.setX(x); newNodePos_.setY(y);
+        nodeGUI->getNameGUI()->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y());
         verifyNodePos();
         std::vector<Model::vertex_sptr> neighbourVertices = graphViewer_->getCurrentGraph()->getVerticesNeighbours()[nodeGUI->getNode()];
         std::vector<Model::node_sptr> parentNodes = graphViewer_->getCurrentGraph()->getParentNodes()[nodeGUI->getNode()];
@@ -194,6 +200,7 @@ namespace View
                 secondNode = getNodeGUI(vertex->getNode()->getName());
 
                 vertexGUI->setLine(nodeGUI->x(), nodeGUI->y(), secondNode->x(), secondNode->y());
+                vertexGUI->getWeightGUI()->setPos(secondNode->pos());
             }
         }
         for (auto&& node : parentNodes) {
@@ -202,6 +209,7 @@ namespace View
                 if (verterxGUIParents) {
                     NodeGUI* nodeGUIParent = getNodeGUI(node->getName());
                     verterxGUIParents->setLine(nodeGUIParent->x(), nodeGUIParent->y(), nodeGUI->x(), nodeGUI->y());
+                    verterxGUIParents->getWeightGUI()->setPos(nodeGUI->pos());
                 }
             }
         }
@@ -279,11 +287,30 @@ namespace View
         NodeGUI* secondNode = getNodeGUI(vertex->getNode()->getName());
         VertexGUI* vertexGUI = new VertexGUI(vertex, firstNode, secondNode);
 
+        //creating the vertex weight GUI
+        
+        QGraphicsTextItem* vertexWeightGUI = new QGraphicsTextItem(QString::number(vertex->getWeight()), vertexGUI);
+        vertexWeightGUI->setPos(secondNode->pos());
+        vertexGUI->setWeightGUI(vertexWeightGUI);
+        /*
+        int posX = firstNode->x() / 2;
+        int posY = firstNode->y() / 2;
+        if (secondNode->x() > firstNode->x()) {
+            posX = secondNode->x() / 2;
+        }
+        if (secondNode->y() > firstNode->y()) {
+            posY = secondNode->y() / 2;
+        }
+
+        vertexWeightGUI->setPos(posX, posY);
+        */
+
         // I set the line in the constructor
         vertexGUI->setFlag(QGraphicsItem::ItemIsSelectable);
 
         // connect signals
         QObject::connect(vertexGUI, &VertexGUI::vertexPressed, this, &GraphViewerGUI::updateSelectedVertex);
+        //graphBoardScene_->addItem(vertexWeightGUI);
         graphBoardScene_->addItem(vertexGUI);
         currentGraphVerticesGUI_.push_back(vertexGUI);
     }
@@ -307,6 +334,7 @@ namespace View
                 break;
             }
         }
+        delete vertexToDelete;
     }
 
     void GraphViewerGUI::updateSelectedVertex(VertexGUI* vertexGUI) {

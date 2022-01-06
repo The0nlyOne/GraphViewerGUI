@@ -30,6 +30,8 @@ namespace View
 		}
 
 		Model::vertex_sptr getVertex() { return vertex_; }
+		QGraphicsTextItem* getWeightGUI() { return weightGUI_; }
+		void setWeightGUI(QGraphicsTextItem* weight) { weightGUI_ = weight; }
 
 		void mousePressEvent(QGraphicsSceneMouseEvent* event) {
 			emit vertexPressed(this);
@@ -41,6 +43,7 @@ namespace View
 	private:
 		NodeGUI* previousNodeGUI_;
 		NodeGUI* nodeGUI_;
+		QGraphicsTextItem* weightGUI_;
 		Model::vertex_sptr vertex_;
 	};
 

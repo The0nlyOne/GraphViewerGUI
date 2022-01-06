@@ -9,16 +9,20 @@ namespace Model
 	}
 
 	void Graph::addNodeAndChildren(node_sptr node) {
+		bool canAddNode = true;
 		// even if node is a set, we must throw same name error because two different pointers can have nodes with same name
 		for (auto&& existingNode : nodes_) {
 			if (existingNode->getName() == node->getName()) {
-				throw SameName("A Node with this name already exist.\n");
+				//throw SameName("A Node with this name already exist.\n");
+				canAddNode = false;
 			}
 		}
-		nodes_.insert(node);
-		emit nodeAddedSignal(node);
-		for (auto&& pairNodeWeight : node->getVertices()) {
-			addAllNodesAndVerticess(node, pairNodeWeight);
+		if (canAddNode) {
+			nodes_.insert(node);
+			emit nodeAddedSignal(node);
+			for (auto&& pairNodeWeight : node->getVertices()) {
+				addAllNodesAndVerticess(node, pairNodeWeight);
+			}
 		}
 	}
 
