@@ -74,15 +74,6 @@ namespace View
         std::shared_ptr<Model::Command> addGraph = std::make_shared<Model::AddGraph>(graphViewer_, graphToAdd);
 
         connectGraph(graphToAdd.get());
-        /*
-        QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
-        //QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
-        */
 
         invoker_->executeCommand(addGraph);
     }
@@ -91,32 +82,13 @@ namespace View
         std::string graphName = graph->getName();
         ui.graphsListWidget->addItem(QString::fromStdString(graphName));
         graphsMap_[graphName] = graph;
-        /*
-        QListWidget* graphsList = ui.graphsListWidget;
-        if (graphsList->count() == 1) { // set the first graph as current if there are no graph
-            graphsList->setCurrentItem(graphsList->item(0));
-        }
-        */
+
         changeCurrentGraphView(graphName);
 
         ui.graphNamelineEdit->setText("");
     }
 
     void GraphViewerGUI::changeGraphCmd(QListWidgetItem* current, QListWidgetItem* previous) {
-        /*
-        if (current)
-        {
-            std::string name = current->text().toStdString();
-
-            std::shared_ptr<Model::Command> changeGraph = std::make_shared<Model::ChangeGraph>(graphViewer_, graphsMap_[name]);
-            invoker_->executeCommand(changeGraph);
-        }
-        else
-        {
-            std::shared_ptr<Model::Command> changeGraph = std::make_shared<Model::ChangeGraph>(graphViewer_, nullptr);
-            invoker_->executeCommand(changeGraph);
-        }
-        */
         if (current) {
             std::string graphName = current->text().toStdString();
             graphViewer_->changeGraph(graphsMap_[graphName]); // will emit the graphChanged signal
@@ -143,73 +115,9 @@ namespace View
         for (auto&& vertex : graph->getVertices()) {
             connectNodesView(graph.get(), vertex);
         }
-
-        /*
-        if (graph->getNodes().size() == 0) { // for when a graph with the same name is deleted and the GUI do not update
-            mapGraphsNodesGUI_[graphName].clear();
-        }
-        else {
-            //if (mapGraphsNodesGUI_[graphName].size() >= 1) {
-                for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graphName]) {
-                    NodeGUI* nodeGUI = pairNameAndNodeGUI.second;
-                    nodeGUI->setBrush(QBrush(Qt::darkCyan));
-                    graphBoardScene_->addItem(nodeGUI);
-                    graphBoardScene_->addItem(nodeGUI->getNameGUI());
-                    graphBoardScene_->addItem(nodeGUI->getDistsGUI());
-                }
-            //}
-        }
-        if (graph->getVertices().size() == 0) {
-            mapGraphsVerticesGUI_[graphName].clear();
-        }
-        else {
-            //if (mapGraphsVerticesGUI_[graphName].size() >= 1) {
-                for (auto&& pairVertexSptrAndVertexGUI : mapGraphsVerticesGUI_[graphName]) {
-                    graphBoardScene_->addItem(pairVertexSptrAndVertexGUI.second);
-                }
-            //}
-        }
-
-        /*
-        if (mapGraphsNodesGUI_[graphName].size() >= 1) {
-            for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graphName]) {
-                NodeGUI* nodeGUI = pairNameAndNodeGUI.second;
-                nodeGUI->setBrush(QBrush(Qt::darkCyan));
-                graphBoardScene_->addItem(nodeGUI);
-                graphBoardScene_->addItem(nodeGUI->getNameGUI());
-                graphBoardScene_->addItem(nodeGUI->getDistsGUI());
-            }
-        }
-
-        if (mapGraphsVerticesGUI_[graphName].size() >= 1) {
-            for (auto&& pairVertexSptrAndVertexGUI : mapGraphsVerticesGUI_[graphName]) {
-                graphBoardScene_->addItem(pairVertexSptrAndVertexGUI.second);
-            }
-        }
-        */
-        // load previous graph info
     }
 
     void GraphViewerGUI::clearGraphCmd() {
-        // it is not a command so we can't cancel
-        /*
-        if (graphViewer_->getCurrentGraph()) {
-            graphViewer_->getCurrentGraph()->clearGraph();
-        }
-
-        if (graphsMap_[name]) { return; } // does not try to add an already existing graph
-
-        Model::graph_sptr graphToAdd = std::make_shared<Model::Graph>(name);
-        std::shared_ptr<Model::Command> addGraph = std::make_shared<Model::AddGraph>(graphViewer_, graphToAdd);
-
-        QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
-        */
-
         Model::graph_sptr currentGraph = graphViewer_->getCurrentGraph();
         if (!currentGraph) { return; }
 
@@ -314,8 +222,21 @@ namespace View
     void GraphViewerGUI::addNodeView(Model::Graph* graph, Model::node_sptr node) {
         // creating the node and setting its position
         NodeGUI* nodeGUI = new NodeGUI(node);
-        nodeGUI->setX(newNodePos_.x());
-        nodeGUI->setY(newNodePos_.y());
+        int nodeX = node->getPos().first;
+        int nodeY = node->getPos().second;
+
+        if (nodeX == 0 && nodeY == 0) { // it means the node has just been created.
+            int newX = newNodePos_.x();
+            int newY = newNodePos_.y();
+            nodeGUI->setX(newX);
+            nodeGUI->setY(newY);
+            nodeGUI->getNode()->setPos(newX, newY);
+        }
+        else {
+            nodeGUI->setX(nodeX);
+            nodeGUI->setY(nodeY);
+            newNodePos_ = QPoint(nodeX, nodeY);
+        }
         nodeGUI->setFlag(QGraphicsItem::ItemIsMovable);
         nodeGUI->setFlag(QGraphicsItem::ItemIsSelectable);
         
@@ -410,6 +331,7 @@ namespace View
 
     void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
         newNodePos_.setX(x); newNodePos_.setY(y);
+        nodeGUI->getNode()->setPos(x, y);
         nodeGUI->getNameGUI()->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y());
         if (nodeGUI->getDistsGUI()) {
             nodeGUI->getDistsGUI()->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
@@ -426,11 +348,6 @@ namespace View
                 secondNode = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex->getNode()->getName()];
                 vertexGUI->updateGUI(nodeGUI, secondNode);
                 graphBoardScene_->update(); // what is the use of update
-
-                /*
-                vertexGUI->setLine(nodeGUI->x(), nodeGUI->y(), secondNode->x(), secondNode->y());
-                vertexGUI->getWeightGUI()->setPos(secondNode->pos());
-                */
             }
         }
         for (auto&& node : parentNodes) {
@@ -440,10 +357,6 @@ namespace View
                     NodeGUI* nodeGUIParent = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][node->getName()];
                     verterxGUIParents->updateGUI(nodeGUIParent, nodeGUI);
                     graphBoardScene_->update(); // what is the use of update...
-                    /*
-                    verterxGUIParents->setLine(nodeGUIParent->x(), nodeGUIParent->y(), nodeGUI->x(), nodeGUI->y());
-                    verterxGUIParents->getWeightGUI()->setPos(nodeGUI->pos());
-                    */
                 }
             }
         }

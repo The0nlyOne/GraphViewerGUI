@@ -62,7 +62,7 @@ namespace View
 
 		void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 			QGraphicsItem::mouseReleaseEvent(event);
-			emit nodeReleased(this, this->x(), this->y()); // to change 
+			emit nodeReleased(this, this->x(), this->y()); 
 		}
 
 		void setNameGUI(QGraphicsTextItem* nameGUI) { nameGUI_ = nameGUI; }

@@ -87,6 +87,9 @@ namespace Model
 		void setPrevNodeMax(node_sptr node) { prevNodeMax_ = node; }
 		node_sptr getPrevNodeMax() { return prevNodeMax_; }
 
+		std::pair<int, int> getPos() { return pos_; }
+		void setPos(int x, int  y) { pos_ = { x, y }; }
+
 		std::vector<std::pair<node_sptr, int>> getVertices() { return vertices_; }
 		void setVertices(std::vector<std::pair<node_sptr, int>> vertices) { vertices_ = vertices; }
 		int getValue() { return value_; }
@@ -101,8 +104,9 @@ namespace Model
 		int distForMax_ = INT_MIN;
 		int count_ = 0;
 		int visited_ = 0;
-		node_sptr prevNodeMin_;
-		node_sptr prevNodeMax_;
+		std::pair<int, int> pos_ = { 0, 0 };
+		node_sptr prevNodeMin_ = nullptr;
+		node_sptr prevNodeMax_ = nullptr;
 		std::vector<std::pair<node_sptr, int>> vertices_;
 		std::vector<int> minDistances_ = { INT_MAX };
 		std::vector<int> maxDistances_ = { INT_MIN };
