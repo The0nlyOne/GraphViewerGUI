@@ -30,9 +30,9 @@ namespace View
 
     public slots:
         void addNodeCmd();
-        void addNodeView(Model::node_sptr node);
+        void addNodeView(Model::Graph* graph, Model::node_sptr node);
         void deleteNodeCmd();
-        void deleteNodeView(Model::node_sptr node);
+        void deleteNodeView(Model::Graph* graph, Model::node_sptr node);
         void manageNodesSelection(NodeGUI* nodeGUI);
 
         void addGraphCmd();
@@ -40,26 +40,28 @@ namespace View
         void changeGraphCmd(QListWidgetItem* current, QListWidgetItem* previous);
         void changeGraphView(Model::graph_sptr graph);
         void clearGraphCmd();
-        void clearGraphView();
+        void clearGraphView(Model::Graph*);
         void removeGraphCmd();
         void removeGraphView(Model::graph_sptr);
 
         void connectNodesCmd();
-        void connectNodesView(Model::vertex_sptr vertex);
+        void connectNodesView(Model::Graph* graph, Model::vertex_sptr vertex);
         void deleteVertexCmd();
-        void deleteVertexView(Model::vertex_sptr vertex);
+        void deleteVertexView(Model::Graph* graph, Model::vertex_sptr vertex);
         void updateSelectedVertex(VertexGUI* vertex, bool isSelected);
 
         void updateMinDistsCmd();
         void updateMaxDistsCmd();
-        void updateMinDistsView();
-        void updateMaxDistsView();
+        void updateMinDistsView(Model::Graph* graph);
+        void updateMaxDistsView(Model::Graph* graph);
 
         void clearDistsItem();
 
-
         void setNewNodePos(NodeGUI* node, int x, int y);
         void verifyNodePos();
+
+        void cancelCmd();
+        void redoCmd();
 
     private:
         Ui::GraphViewerGUIClass ui;

@@ -34,7 +34,8 @@ namespace View
         QObject::connect(ui.clearDistsValuesButton, SIGNAL(clicked()), this, SLOT(clearDistsItem()));
         QObject::connect(ui.clearGraphButton, SIGNAL(clicked()), this, SLOT(clearGraphCmd()));
         QObject::connect(ui.deleteGraphButton, SIGNAL(clicked()), this, SLOT(removeGraphCmd()));
-
+        QObject::connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelCmd()));
+        QObject::connect(ui.redoButton, SIGNAL(clicked()), this, SLOT(redoCmd()));
         // listConnection
         QObject::connect(ui.graphsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
             this, SLOT(changeGraphCmd(QListWidgetItem*, QListWidgetItem*)));
@@ -50,6 +51,9 @@ namespace View
         if (ui.graphNamelineEdit->text() == "") { return; }
 
         std::string name = ui.graphNamelineEdit->text().toStdString();
+
+        if (graphsMap_[name]) { return; } // does not try to add an already existing graph
+
         Model::graph_sptr graphToAdd = std::make_shared<Model::Graph>(name);
         std::shared_ptr<Model::Command> addGraph = std::make_shared<Model::AddGraph>(graphViewer_, graphToAdd);
 
@@ -61,10 +65,7 @@ namespace View
         QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
         QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
 
-        try {
-            invoker_->executeCommand(addGraph);
-        }
-        catch (Model::SameName& error) {} // does not add the graph if it has the same name than one already existing
+        invoker_->executeCommand(addGraph);
     }
 
     void GraphViewerGUI::addGraphView(Model::graph_sptr graph) {
@@ -80,6 +81,7 @@ namespace View
     }
 
     void GraphViewerGUI::changeGraphCmd(QListWidgetItem* current, QListWidgetItem* previous) {
+        /*
         if (current)
         {
             std::string name = current->text().toStdString();
@@ -91,6 +93,14 @@ namespace View
         {
             std::shared_ptr<Model::Command> changeGraph = std::make_shared<Model::ChangeGraph>(graphViewer_, nullptr);
             invoker_->executeCommand(changeGraph);
+        }
+        */
+        if (current) {
+            std::string graphName = current->text().toStdString();
+            graphViewer_->changeGraph(graphsMap_[graphName]); // will emit the graphChanged signal
+        }
+        else {
+            clearGUI();
         }
     }
 
@@ -125,12 +135,12 @@ namespace View
         }
     }
 
-    void GraphViewerGUI::clearGraphView() {
+    void GraphViewerGUI::clearGraphView(Model::Graph* graph) {
         // it is not a command so we can't cancel
         clearGUI();
 
-        mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()].clear();
-        mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()].clear();
+        mapGraphsNodesGUI_[graph->getName()].clear();
+        mapGraphsVerticesGUI_[graph->getName()].clear();
     }
 
     void GraphViewerGUI::clearGUI() {
@@ -162,8 +172,12 @@ namespace View
 
     void GraphViewerGUI::removeGraphView(Model::graph_sptr graph) {
         if (!graph) { return; }
-        ui.graphsListWidget->takeItem(ui.graphsListWidget->currentRow());
-        graphsMap_.erase(graph->getName());
+        for (int i = 0; i < ui.graphsListWidget->count(); i++) {
+            if (ui.graphsListWidget->item(i)->text().toStdString() == graph->getName()) {
+                ui.graphsListWidget->takeItem(i);
+                graphsMap_.erase(graph->getName());
+            }
+        }
     }
 
     void GraphViewerGUI::addNodeCmd() {
@@ -181,7 +195,7 @@ namespace View
         }
     }
 
-    void GraphViewerGUI::addNodeView(Model::node_sptr node) {
+    void GraphViewerGUI::addNodeView(Model::Graph* graph, Model::node_sptr node) {
         // creating the node and setting its position
         NodeGUI* nodeGUI = new NodeGUI(node);
         nodeGUI->setX(newNodePos_.x());
@@ -200,7 +214,7 @@ namespace View
 
         graphBoardScene_->addItem(nodeGUI);
         graphBoardScene_->addItem(nodeNameGUI);
-        mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][node->getName()] = nodeGUI;
+        mapGraphsNodesGUI_[graph->getName()][node->getName()] = nodeGUI;
         
         ui.nodeNameLineEdit->setText("");
         // update the position of next Node
@@ -218,9 +232,9 @@ namespace View
         }
     }
 
-    void GraphViewerGUI::deleteNodeView(Model::node_sptr node) {
-        NodeGUI* nodeToDelete = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][node->getName()];
-        mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()].erase(node->getName());
+    void GraphViewerGUI::deleteNodeView(Model::Graph* graph, Model::node_sptr node) {
+        NodeGUI* nodeToDelete = mapGraphsNodesGUI_[graph->getName()][node->getName()];
+        mapGraphsNodesGUI_[graph->getName()].erase(node->getName());
         graphBoardScene_->removeItem(nodeToDelete);
 
         if (nodeToDelete == previousFirstConnectedNode_) { previousFirstConnectedNode_ = nullptr; }
@@ -367,10 +381,10 @@ namespace View
         }
     }
 
-    void GraphViewerGUI::connectNodesView(Model::vertex_sptr vertex) {
+    void GraphViewerGUI::connectNodesView(Model::Graph* graph, Model::vertex_sptr vertex) {
         // creating the vertex and setting up the position
-        NodeGUI* firstNode = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex->getPreviousNode()->getName()];
-        NodeGUI* secondNode = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex->getNode()->getName()];
+        NodeGUI* firstNode = mapGraphsNodesGUI_[graph->getName()][vertex->getPreviousNode()->getName()];
+        NodeGUI* secondNode = mapGraphsNodesGUI_[graph->getName()][vertex->getNode()->getName()];
         VertexGUI* vertexGUI = new VertexGUI(vertex, firstNode, secondNode);
 
         //creating the vertex weight GUI
@@ -385,7 +399,7 @@ namespace View
         QObject::connect(vertexGUI, &VertexGUI::isSelected, this, &GraphViewerGUI::updateSelectedVertex);
         //graphBoardScene_->addItem(vertexWeightGUI);
         graphBoardScene_->addItem(vertexGUI);
-        mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex] = vertexGUI;
+        mapGraphsVerticesGUI_[graph->getName()][vertex] = vertexGUI;
 
         ui.vertexWeightSpinBox->setValue(1); // reinitialize the weight spinbox
         // set the currentselectednodegui (secondNode) to unselected so we can chain connection with the manageSelection
@@ -402,13 +416,13 @@ namespace View
         }
     }
 
-    void GraphViewerGUI::deleteVertexView(Model::vertex_sptr vertex) {
+    void GraphViewerGUI::deleteVertexView(Model::Graph* graph, Model::vertex_sptr vertex) {
         ui.vertexSelectedLineEdit->setText("");
 
-        VertexGUI* vertexToDelete = mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex];
+        VertexGUI* vertexToDelete = mapGraphsVerticesGUI_[graph->getName()][vertex];
         if (vertexToDelete) {
             graphBoardScene_->removeItem(vertexToDelete);
-            mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()].erase(vertex);
+            mapGraphsVerticesGUI_[graph->getName()].erase(vertex);
             delete vertexToDelete;
             selectedVertex_ = nullptr;
         }
@@ -459,9 +473,9 @@ namespace View
         }
     }
 
-    void GraphViewerGUI::updateMinDistsView() {
+    void GraphViewerGUI::updateMinDistsView(Model::Graph* graph) {
         clearDistsItem();
-        for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()]) {
+        for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
             QGraphicsTextItem* minDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMin()));
             nodeGUI->setDistsGUI(minDist);
@@ -471,9 +485,9 @@ namespace View
         }
     }
 
-    void GraphViewerGUI::updateMaxDistsView() {
+    void GraphViewerGUI::updateMaxDistsView(Model::Graph* graph) {
         clearDistsItem();
-        for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()]) {
+        for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
             QGraphicsTextItem* maxDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMax()));
             nodeGUI->setDistsGUI(maxDist);
@@ -481,5 +495,13 @@ namespace View
 
             graphBoardScene_->addItem(maxDist);
         }
+    }
+
+    void GraphViewerGUI::cancelCmd() {
+        invoker_->cancel();
+    }
+
+    void GraphViewerGUI::redoCmd() {
+        invoker_->redo();
     }
 }

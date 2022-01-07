@@ -600,7 +600,7 @@
       <string>REDO</string>
      </property>
      <property name="shortcut">
-      <string>Ctrl+Y, Ctrl+Shift+Z</string>
+      <string>Ctrl+Shift+Z</string>
      </property>
     </widget>
    </widget>

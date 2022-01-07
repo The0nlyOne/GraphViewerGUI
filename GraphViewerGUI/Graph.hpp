@@ -102,13 +102,13 @@ namespace Model
 
 
 	signals:
-		void nodeAddedSignal(node_sptr node);
-		void nodeDeletedSignal(node_sptr node);
-		void vertexAddedSignal(vertex_sptr vertex);
-		void vertexDeletedSignal(vertex_sptr vertex);
-		void graphCleared();
-		void minDistUpdatedSignal();
-		void maxDistUpdatedSignal();
+		void nodeAddedSignal(Graph* graph, node_sptr node);
+		void nodeDeletedSignal(Graph* graph, node_sptr node);
+		void vertexAddedSignal(Graph* graph, vertex_sptr vertex);
+		void vertexDeletedSignal(Graph* graph, vertex_sptr vertex);
+		void graphCleared(Graph* graph);
+		void minDistUpdatedSignal(Graph* graph);
+		void maxDistUpdatedSignal(Graph* graph);
 
 	private:
 		std::string name_;

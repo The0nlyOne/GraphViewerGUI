@@ -17,7 +17,7 @@ namespace Model
 		verticesNeighbours_.clear();
 		parentNodes_.clear();
 
-		emit graphCleared();
+		emit graphCleared(this);
 	}
 
 	void Graph::addNodeAndChildren(node_sptr node) {
@@ -31,7 +31,7 @@ namespace Model
 		}
 		if (canAddNode) {
 			nodes_.insert(node);
-			emit nodeAddedSignal(node);
+			emit nodeAddedSignal(this, node);
 			for (auto&& pairNodeWeight : node->getVertices()) {
 				addAllNodesAndVerticess(node, pairNodeWeight);
 			}
@@ -42,7 +42,7 @@ namespace Model
 		if (findVertex(parentNode, pairNodeWeight.first, pairNodeWeight.second)) { return; } // stop if vertex already exist
 
 		nodes_.insert(pairNodeWeight.first);
-		emit nodeAddedSignal(pairNodeWeight.first);
+		emit nodeAddedSignal(this, pairNodeWeight.first);
 		if (pairNodeWeight.first->getVertices().size() == 0) {
 			leaves_.insert(pairNodeWeight.first);
 		}
@@ -59,7 +59,7 @@ namespace Model
 		vertices_.push_back(vertex);
 		verticesNeighbours_[parentNode].push_back(vertex);
 		parentNodes_[childNode].push_back(parentNode);
-		emit vertexAddedSignal(vertex);
+		emit vertexAddedSignal(this, vertex);
 
 	}
 
@@ -103,7 +103,7 @@ namespace Model
 			}
 			updateMinDist(root_);  // use bool isMin to know which function to call between updateMaxDist and updateMinDist
 			updateMaxDist(root_);
-			emit vertexDeletedSignal(vertex);
+			emit vertexDeletedSignal(this, vertex);
 		}
 	}
 
@@ -135,6 +135,7 @@ namespace Model
 			for (auto&& node : nodes_) { // to make sure that we change the root if the current one is deleted
 				if (node != nodeToDel) {
 					root_ = node;
+					break;
 				}
 			}
 			nodes_.erase(nodeToDel); // does not throw exception if nodeToDel == nullptr
@@ -153,7 +154,7 @@ namespace Model
 					disconnectVertex(vertex);
 				}
 			}
-			emit nodeDeletedSignal(nodeToDel);
+			emit nodeDeletedSignal(this, nodeToDel);
 		}
 	}
 
@@ -168,7 +169,7 @@ namespace Model
 			updateMinDist(vertex);
 		}
 		root->incrementCount();
-		emit minDistUpdatedSignal();
+		emit minDistUpdatedSignal(this);
 	}
 
 	void Graph::updateMaxDist(node_sptr root) {
@@ -182,7 +183,7 @@ namespace Model
 			updateMaxDist(vertex);
 		}
 		root->incrementCount();
-		emit maxDistUpdatedSignal();
+		emit maxDistUpdatedSignal(this);
 	}
 
 	void Graph::updateMinDist(vertex_sptr vertex) {
