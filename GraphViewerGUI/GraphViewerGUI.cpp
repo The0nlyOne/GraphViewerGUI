@@ -132,6 +132,33 @@ namespace View
         if (!graph) { return; }
 
         std::string graphName = graph->getName();
+
+        if (graph->getNodes().size() == 0) {
+            mapGraphsNodesGUI_[graphName].clear();
+        }
+        else {
+            //if (mapGraphsNodesGUI_[graphName].size() >= 1) {
+                for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graphName]) {
+                    NodeGUI* nodeGUI = pairNameAndNodeGUI.second;
+                    nodeGUI->setBrush(QBrush(Qt::darkCyan));
+                    graphBoardScene_->addItem(nodeGUI);
+                    graphBoardScene_->addItem(nodeGUI->getNameGUI());
+                    graphBoardScene_->addItem(nodeGUI->getDistsGUI());
+                }
+            //}
+        }
+        if (graph->getVertices().size() == 0) {
+            mapGraphsVerticesGUI_[graphName].clear();
+        }
+        else {
+            //if (mapGraphsVerticesGUI_[graphName].size() >= 1) {
+                for (auto&& pairVertexSptrAndVertexGUI : mapGraphsVerticesGUI_[graphName]) {
+                    graphBoardScene_->addItem(pairVertexSptrAndVertexGUI.second);
+                }
+            //}
+        }
+
+        /*
         if (mapGraphsNodesGUI_[graphName].size() >= 1) {
             for (auto&& pairNameAndNodeGUI : mapGraphsNodesGUI_[graphName]) {
                 NodeGUI* nodeGUI = pairNameAndNodeGUI.second;
@@ -147,6 +174,7 @@ namespace View
                 graphBoardScene_->addItem(pairVertexSptrAndVertexGUI.second);
             }
         }
+        */
         // load previous graph info
     }
 
