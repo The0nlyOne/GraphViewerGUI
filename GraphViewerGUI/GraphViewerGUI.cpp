@@ -475,6 +475,8 @@ namespace View
 
     void GraphViewerGUI::updateMinDistsView(Model::Graph* graph) {
         clearDistsItem();
+        if (graph->getName() != graphViewer_->getCurrentGraph()->getName()) { return; }
+
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
             QGraphicsTextItem* minDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMin()));
@@ -487,6 +489,8 @@ namespace View
 
     void GraphViewerGUI::updateMaxDistsView(Model::Graph* graph) {
         clearDistsItem();
+        if (graph->getName() != graphViewer_->getCurrentGraph()->getName()) { return; }
+
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
             QGraphicsTextItem* maxDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMax()));
