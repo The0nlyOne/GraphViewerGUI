@@ -8,19 +8,6 @@ namespace Model
 		return (first->getWeight() < second->getWeight()) ? true : false;
 	}
 
-	/*
-	void Graph::clearGraph() {
-		root_ = nullptr;
-		nodes_.clear();
-		leaves_.clear();
-		vertices_.clear();
-		verticesNeighbours_.clear();
-		parentNodes_.clear();
-
-		emit graphCleared(this);
-	}
-	*/
-
 	void Graph::addNodeAndChildren(node_sptr node) {
 		bool canAddNode = true;
 		// even if node is a set, we must throw same name error because two different pointers can have nodes with same name
@@ -223,10 +210,7 @@ namespace Model
 		for (auto&& nextVertex : verticesNeighbours_[vertex->getNode()]) {
 			nextVertex->getNode()->resetVisited();
 			if (nextVertex->getKnown()) {
-				//if (nextVertex->getNode()->getDistForMinVector()[nextVertex->getNode()->getDistForMinVector().size() - 1] != INT_MAX) {
-				// iif the vertex is known it mean that the dist has been updated and is not INT_MAX
 				nextVertex->getNode()->addInfForMinVector();
-				//}
 			}
 		}
 		vertex->getNode()->incrementCount(); // increment when we finished exploring all its neighbours
@@ -269,10 +253,7 @@ namespace Model
 		for (auto&& nextVertex : verticesNeighbours_[vertex->getNode()]) {
 			nextVertex->getNode()->resetVisited();
 			if (nextVertex->getKnown()) {
-				//if (nextVertex->getNode()->getDistForMinVector()[nextVertex->getNode()->getDistForMinVector().size() - 1] != INT_MAX) {
-				// iif the vertex is known it mean that the dist has been updated and is not INT_MAX
 				nextVertex->getNode()->addInfForMaxVector();
-				//}
 			}
 		}
 
@@ -294,7 +275,6 @@ namespace Model
 		for (auto&& vertex : verticesNeighbours_[root]) {
 			if (vertex->getKnown()) {
 				vertex->setKnown(false);
-				//knownVertices_.second--;
 				resetKnownChildrenNodes(vertex->getNode());
 			}
 		}

@@ -11,12 +11,9 @@
 
 namespace View 
 {
-	class NodeGUI : public QGraphicsObject { //derive from QGraphicsObject instead of QGraphicsItem so that we can use signals and slots with it.
+	class NodeGUI : public QObject, public QGraphicsItem { //derive from QGraphicsObject instead of QGraphicsItem so that we can use signals and slots with it.
 		Q_OBJECT
 	public:
-		/*
-		NodeGUI() = default;
-		*/
 		NodeGUI(Model::node_sptr node) :
 			node_(node)
 		{
@@ -29,21 +26,13 @@ namespace View
 			delete distsGUI_;
 		}
 
-		QRectF boundingRect() const override
-		{
-			qreal penWidth = 1;
-			return QRectF(0 + penWidth, 0 + penWidth, diameter_ + penWidth, diameter_ + penWidth);
-		}
+		QRectF boundingRect() const override;
 		
-		void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override
-		{
-			painter->setBrush(brush_);
-			painter->drawEllipse(0, 0, diameter_, diameter_);
-		}
+		void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
 		Model::node_sptr getNode() { return node_; }
 		
-		QVariant itemChange(GraphicsItemChange change, const QVariant& value) { // it is called too many time for what I am using it
+		QVariant itemChange(GraphicsItemChange change, const QVariant& value) { // Cant add it in cpp file for some reason
 			if (change == QGraphicsItem::ItemSelectedChange) {
 				if (value.toBool()) { // is selected
 					brush_ = QBrush(Qt::yellow);

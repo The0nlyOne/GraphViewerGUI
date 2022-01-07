@@ -27,7 +27,6 @@ namespace Model
 			redoStack = CommandsStack(); // reinitialize the redoStack
 			command->execute();
 			cancelStack.push(command);
-			//emit executedSignal();
 		}
 
 		void cancel()
@@ -36,7 +35,6 @@ namespace Model
 				return;
 			cancelStack.top()->cancel();		// cancel the most recent command
 			redoStack.push(cancelStack.top());	// add the canceled command in redoStack
-			//emit canceledSignal(cancelStack.top());
 			cancelStack.pop();					// remove the canceled command from the cancelStack
 		}
 
@@ -47,15 +45,7 @@ namespace Model
 			redoStack.top()->redo();			// redo the most recent command
 			cancelStack.push(redoStack.top());	// add that command to the cancelStack
 			redoStack.pop();					// remove that command from the redoStack
-			//emit redidSignal();
 		}
-
-		/*
-	signals:
-		void executedSignal();
-		void canceledSignal(std::shared_ptr<Command> canceledCommand);
-		void redidSignal();
-		*/
 
 	private:
 		Invoker() = default;

@@ -86,6 +86,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="NodeGUI.cpp" />
+    <ClCompile Include="VertexGUI.cpp" />
     <QtRcc Include="GraphViewerGUI.qrc" />
     <QtUic Include="GraphViewerGUI.ui" />
     <QtMoc Include="GraphViewerGUI.hpp" />

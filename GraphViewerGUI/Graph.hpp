@@ -112,7 +112,6 @@ namespace Model
 
 	private:
 		std::string name_;
-		//std::pair<std::vector<vertex_sptr>, int> knownVertices_ = { {}, 0 }; // debugging tool, to delete later
 		node_sptr root_; // use unique_ptr instead?
 		std::unordered_set<node_sptr> nodes_; // using unordered set because most of its method are O(1) for my utilisation
 		std::unordered_set<node_sptr> leaves_; // and because when the graph is convexe, other containers will have duplicate.

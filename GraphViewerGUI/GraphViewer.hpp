@@ -31,7 +31,6 @@ namespace Model
 				if (graphsVector_[i]->getName() == graphToAdd->getName()) {
 					graphsVector_.erase(graphsVector_.begin() + i);
 					break;
-					//throw SameName("A Graph with this name already exist.\n");
 				}
 			}
 			graphsVector_.push_back(graphToAdd);
@@ -52,7 +51,6 @@ namespace Model
 			for (int i = 0; i < graphsVector_.size(); i++) {
 				if (graphsVector_[i]->getName() == graphToSwapWith->getName()) {
 					graphsVector_.erase(graphsVector_.begin() + i);
-					// emit graphAddedSignal(graphToSwapWith);
 					break;
 				}
 			}

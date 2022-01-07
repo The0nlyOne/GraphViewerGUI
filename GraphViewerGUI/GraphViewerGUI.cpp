@@ -59,7 +59,6 @@ namespace View
         QObject::connect(graph, &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
         QObject::connect(graph, &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
         QObject::connect(graph, &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
-        //QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
     }
 
     void GraphViewerGUI::addGraphCmd()

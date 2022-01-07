@@ -20,28 +20,16 @@ namespace Model
 		Node() = default;
 
 		Node(std::string name) :
-			name_(name)
-		{
-		}
+			name_(name) {}
 
 		Node(std::string name, int value) :
-			name_(name),
-			value_(value)
-		{
-		}
+			name_(name), value_(value) {}
 
 		Node(std::string name, const std::vector<std::pair<node_sptr, int>>& edges) :
-			name_(name),
-			vertices_(edges)
-		{
-		}
+			name_(name), vertices_(edges) {}
 
 		Node(std::string name, int value, const std::vector<std::pair<node_sptr, int>>& edges) :
-			name_(name),
-			value_(value),
-			vertices_(edges)
-		{
-		}
+			name_(name), value_(value), vertices_(edges) {}
 
 		void connect(const node_sptr node, const int weight);
 		void disconnect(node_sptr node, int weight);
