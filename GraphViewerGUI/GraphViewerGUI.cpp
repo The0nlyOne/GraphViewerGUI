@@ -36,6 +36,7 @@ namespace View
         QObject::connect(ui.deleteGraphButton, SIGNAL(clicked()), this, SLOT(removeGraphCmd()));
         QObject::connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelCmd()));
         QObject::connect(ui.redoButton, SIGNAL(clicked()), this, SLOT(redoCmd()));
+
         // listConnection
         QObject::connect(ui.graphsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
             this, SLOT(changeGraphCmd(QListWidgetItem*, QListWidgetItem*)));
@@ -44,6 +45,10 @@ namespace View
         QObject::connect(graphViewer_, &Model::GraphViewer::graphAddedSignal, this, &GraphViewerGUI::addGraphView);
         QObject::connect(graphViewer_, &Model::GraphViewer::graphRemovedSignal, this, &GraphViewerGUI::removeGraphView);
         QObject::connect(graphViewer_, &Model::GraphViewer::graphChangedSignal, this, &GraphViewerGUI::changeGraphView);
+
+        // second shortcut for redoButton. The first one was added with the Qt editor
+        QShortcut* redoShortcut2 = new QShortcut(QKeySequence("Ctrl+Y"), this);
+        QObject::connect(redoShortcut2, SIGNAL(activated()), ui.redoButton, SLOT(click()));
     }
 
     void GraphViewerGUI::addGraphCmd()
