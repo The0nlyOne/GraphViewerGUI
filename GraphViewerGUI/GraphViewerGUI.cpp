@@ -45,10 +45,21 @@ namespace View
         QObject::connect(graphViewer_, &Model::GraphViewer::graphAddedSignal, this, &GraphViewerGUI::addGraphView);
         QObject::connect(graphViewer_, &Model::GraphViewer::graphRemovedSignal, this, &GraphViewerGUI::removeGraphView);
         QObject::connect(graphViewer_, &Model::GraphViewer::graphChangedSignal, this, &GraphViewerGUI::changeGraphView);
+        QObject::connect(graphViewer_, &Model::GraphViewer::graphCleared, this, &GraphViewerGUI::clearGraphView);
 
         // second shortcut for redoButton. The first one was added with the Qt editor
         QShortcut* redoShortcut2 = new QShortcut(QKeySequence("Ctrl+Y"), this);
         QObject::connect(redoShortcut2, SIGNAL(activated()), ui.redoButton, SLOT(click()));
+    }
+
+    void GraphViewerGUI::connectGraph(Model::Graph* graph) {
+        QObject::connect(graph, &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
+        QObject::connect(graph, &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
+        QObject::connect(graph, &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
+        QObject::connect(graph, &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
+        QObject::connect(graph, &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
+        QObject::connect(graph, &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
+        //QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
     }
 
     void GraphViewerGUI::addGraphCmd()
@@ -62,13 +73,16 @@ namespace View
         Model::graph_sptr graphToAdd = std::make_shared<Model::Graph>(name);
         std::shared_ptr<Model::Command> addGraph = std::make_shared<Model::AddGraph>(graphViewer_, graphToAdd);
 
+        connectGraph(graphToAdd.get());
+        /*
         QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
         QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
         QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
         QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
         QObject::connect(graphToAdd.get(), &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
         QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
-        QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
+        //QObject::connect(graphToAdd.get(), &Model::Graph::graphCleared, this, &GraphViewerGUI::clearGraphView);
+        */
 
         invoker_->executeCommand(addGraph);
     }
@@ -77,10 +91,13 @@ namespace View
         std::string graphName = graph->getName();
         ui.graphsListWidget->addItem(QString::fromStdString(graphName));
         graphsMap_[graphName] = graph;
+        /*
         QListWidget* graphsList = ui.graphsListWidget;
         if (graphsList->count() == 1) { // set the first graph as current if there are no graph
             graphsList->setCurrentItem(graphsList->item(0));
         }
+        */
+        changeCurrentGraphView(graphName);
 
         ui.graphNamelineEdit->setText("");
     }
@@ -135,19 +152,56 @@ namespace View
 
     void GraphViewerGUI::clearGraphCmd() {
         // it is not a command so we can't cancel
+        /*
         if (graphViewer_->getCurrentGraph()) {
             graphViewer_->getCurrentGraph()->clearGraph();
         }
+
+        if (graphsMap_[name]) { return; } // does not try to add an already existing graph
+
+        Model::graph_sptr graphToAdd = std::make_shared<Model::Graph>(name);
+        std::shared_ptr<Model::Command> addGraph = std::make_shared<Model::AddGraph>(graphViewer_, graphToAdd);
+
+        QObject::connect(graphToAdd.get(), &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::vertexDeletedSignal, this, &GraphViewerGUI::deleteVertexView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::minDistUpdatedSignal, this, &GraphViewerGUI::updateMinDistsView);
+        QObject::connect(graphToAdd.get(), &Model::Graph::maxDistUpdatedSignal, this, &GraphViewerGUI::updateMaxDistsView);
+        */
+
+        Model::graph_sptr currentGraph = graphViewer_->getCurrentGraph();
+        if (!currentGraph) { return; }
+
+        std::string name = currentGraph->getName();
+        Model::graph_sptr graphToSwapWith = std::make_shared<Model::Graph>(name);
+        std::shared_ptr<Model::Command> clearGraph = std::make_shared<Model::ClearGraph>(graphViewer_, currentGraph, graphToSwapWith);
+
+        connectGraph(graphToSwapWith.get());
+
+        invoker_->executeCommand(clearGraph);
     }
 
-    void GraphViewerGUI::clearGraphView(Model::Graph* graph) {
+    
+    void GraphViewerGUI::clearGraphView(Model::graph_sptr graph) {
         // it is not a command so we can't cancel
         clearGUI();
 
-        // could erase instead of clear
+        if (!graph) { return; }
+
+        // do not erase cause we still use the graphname
         mapGraphsNodesGUI_[graph->getName()].clear();
         mapGraphsVerticesGUI_[graph->getName()].clear();
+
+        // add current graph nodeGUI and vertices GUI
+        for (auto&& node : graph->getNodes()) {
+            addNodeView(graph.get(), node);
+        }
+        for (auto&& vertex : graph->getVertices()) {
+            connectNodesView(graph.get(), vertex);
+        }
     }
+    
 
     void GraphViewerGUI::clearGUI() {
         ui.nodeNameLineEdit->setText("");
@@ -190,7 +244,7 @@ namespace View
     void GraphViewerGUI::changeCurrentGraphView(std::string graphName) {
         for (int i = 0; i < ui.graphsListWidget->count(); i++) {
             if (ui.graphsListWidget->item(i)->text().toStdString() == graphName) {
-                ui.graphsListWidget->setCurrentItem(ui.graphsListWidget->item(i));
+                ui.graphsListWidget->setCurrentItem(ui.graphsListWidget->item(i)); // will send a signal that will trigger changeGraphCmd()
                 break;
             }
         }
@@ -198,7 +252,7 @@ namespace View
 
     void GraphViewerGUI::verifyCurrentGraph(Model::Graph* graph) {
         if (graph->getName() != graphViewer_->getCurrentGraph()->getName()) {
-            changeCurrentGraphView(graph->getName()); // will send a signal that will trigger changeGraphCmd()
+            changeCurrentGraphView(graph->getName()); 
         }
     }
 
@@ -331,7 +385,7 @@ namespace View
                 // the firstNode GUI is the current one, nodeGUI (the parent)
                 secondNode = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex->getNode()->getName()];
                 vertexGUI->updateGUI(nodeGUI, secondNode);
-                graphBoardScene_->update();
+                graphBoardScene_->update(); // what is the use of update
 
                 /*
                 vertexGUI->setLine(nodeGUI->x(), nodeGUI->y(), secondNode->x(), secondNode->y());
@@ -345,7 +399,7 @@ namespace View
                 if (verterxGUIParents) {
                     NodeGUI* nodeGUIParent = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][node->getName()];
                     verterxGUIParents->updateGUI(nodeGUIParent, nodeGUI);
-                    graphBoardScene_->update();
+                    graphBoardScene_->update(); // what is the use of update...
                     /*
                     verterxGUIParents->setLine(nodeGUIParent->x(), nodeGUIParent->y(), nodeGUI->x(), nodeGUI->y());
                     verterxGUIParents->getWeightGUI()->setPos(nodeGUI->pos());

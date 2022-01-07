@@ -27,6 +27,7 @@ namespace View
         GraphViewerGUI(QWidget* parent = Q_NULLPTR);
         void initialize();
         void setUpConnections();
+        void connectGraph(Model::Graph* graph);
         void clearGUI();
         void changeCurrentGraphView(std::string graphName);
         void verifyCurrentGraph(Model::Graph* graph); // make sure that we are updating the view of the currentGraph
@@ -43,7 +44,7 @@ namespace View
         void changeGraphCmd(QListWidgetItem* current, QListWidgetItem* previous);
         void changeGraphView(Model::graph_sptr graph);
         void clearGraphCmd();
-        void clearGraphView(Model::Graph*);
+        void clearGraphView(Model::graph_sptr graph);
         void removeGraphCmd();
         void removeGraphView(Model::graph_sptr);
 

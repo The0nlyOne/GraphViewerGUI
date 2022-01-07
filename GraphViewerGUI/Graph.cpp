@@ -8,7 +8,7 @@ namespace Model
 		return (first->getWeight() < second->getWeight()) ? true : false;
 	}
 
-
+	/*
 	void Graph::clearGraph() {
 		root_ = nullptr;
 		nodes_.clear();
@@ -19,6 +19,7 @@ namespace Model
 
 		emit graphCleared(this);
 	}
+	*/
 
 	void Graph::addNodeAndChildren(node_sptr node) {
 		bool canAddNode = true;

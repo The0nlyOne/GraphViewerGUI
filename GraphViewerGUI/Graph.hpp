@@ -42,7 +42,7 @@ namespace Model
 			addNodeAndChildren(root_);
 		}
 
-		void clearGraph();
+		// void clearGraph();
 
 		void addNodeAndChildren(node_sptr node);
 		void addAllNodesAndVerticess(node_sptr parentNode, std::pair<node_sptr, int> pairNodeWeight);
@@ -106,7 +106,7 @@ namespace Model
 		void nodeDeletedSignal(Graph* graph, node_sptr node);
 		void vertexAddedSignal(Graph* graph, vertex_sptr vertex);
 		void vertexDeletedSignal(Graph* graph, vertex_sptr vertex);
-		void graphCleared(Graph* graph);
+		//void graphCleared(Graph* graph);
 		void minDistUpdatedSignal(Graph* graph);
 		void maxDistUpdatedSignal(Graph* graph);
 

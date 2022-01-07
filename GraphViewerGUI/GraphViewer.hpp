@@ -27,9 +27,11 @@ namespace Model
 		}
 
 		void addGraph(graph_sptr graphToAdd) {
-			for (auto&& graph : graphsVector_) {
-				if (graph->getName() == graphToAdd->getName()) {
-					throw SameName("A Graph with this name already exist.\n");
+			for (int i = 0; i < graphsVector_.size(); i++) {
+				if (graphsVector_[i]->getName() == graphToAdd->getName()) {
+					graphsVector_.erase(graphsVector_.begin() + i);
+					break;
+					//throw SameName("A Graph with this name already exist.\n");
 				}
 			}
 			graphsVector_.push_back(graphToAdd);
@@ -46,6 +48,19 @@ namespace Model
 			emit graphRemovedSignal(graphToRemove);
 		}
 
+		void clearGraph(graph_sptr graphToSwapWith) {
+			for (int i = 0; i < graphsVector_.size(); i++) {
+				if (graphsVector_[i]->getName() == graphToSwapWith->getName()) {
+					graphsVector_.erase(graphsVector_.begin() + i);
+					// emit graphAddedSignal(graphToSwapWith);
+					break;
+				}
+			}
+			graphsVector_.push_back(graphToSwapWith);
+			currentGraph_ = graphToSwapWith;
+			emit graphCleared(graphToSwapWith);
+		}
+
 		graph_sptr getCurrentGraph() { return currentGraph_; }
 		std::vector<graph_sptr> getGraphsVector() { return graphsVector_; }
 
@@ -53,6 +68,7 @@ namespace Model
 		void graphChangedSignal(graph_sptr currentGraph);
 		void graphAddedSignal(graph_sptr graphAdded);
 		void graphRemovedSignal(graph_sptr graphRemoved);
+		void graphCleared(graph_sptr graphToReplaceWith);
 	private:
 		GraphViewer() = default;
 		std::vector<graph_sptr> graphsVector_;
