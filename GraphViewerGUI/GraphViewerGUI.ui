@@ -366,10 +366,10 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>1</number>
+      <number>-2147483647</number>
      </property>
      <property name="maximum">
-      <number>666666666</number>
+      <number>2147483646</number>
      </property>
     </widget>
     <widget class="QLineEdit" name="firstNodeSelectedLineEdit">
@@ -443,6 +443,9 @@
      </property>
     </widget>
     <widget class="QPushButton" name="biConnectNodesButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -481,6 +484,9 @@
      </property>
     </widget>
     <widget class="QPushButton" name="biDeleteVertexButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -692,6 +698,9 @@
      </property>
     </widget>
     <widget class="QSpinBox" name="nodeValueSpinBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>80</x>
