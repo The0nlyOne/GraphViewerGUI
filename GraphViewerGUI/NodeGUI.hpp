@@ -14,13 +14,21 @@ namespace View
 	class NodeGUI : public QGraphicsObject { //derive from QGraphicsObject instead of QGraphicsItem so that we can use signals and slots with it.
 		Q_OBJECT
 	public:
+		/*
 		NodeGUI() = default;
+		*/
 		NodeGUI(Model::node_sptr node) :
 			node_(node)
 		{
 			setAcceptDrops(true); // useless when ItemIsMovable
 			setAcceptHoverEvents(true);
 		}
+
+		~NodeGUI() {
+			delete nameGUI_;
+			delete distsGUI_;
+		}
+
 		QRectF boundingRect() const override
 		{
 			qreal penWidth = 1;

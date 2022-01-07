@@ -22,6 +22,7 @@ namespace Model
 
 	void Node::updateDistFoMin() {
 		for (auto&& distance : minDistances_) {
+			if (distance == INT_MAX || distance == INT_MIN) { continue; }
 			if (distance < distForMin_) {
 				distForMin_ = distance;
 			}
@@ -30,6 +31,7 @@ namespace Model
 
 	void Node::updateDistForMax() {
 		for (auto&& distance : maxDistances_) {
+			if (distance == INT_MAX || distance == INT_MIN) { continue; }
 			if (distance > distForMax_) {
 				distForMax_ = distance;
 			}

@@ -144,6 +144,7 @@ namespace View
         // it is not a command so we can't cancel
         clearGUI();
 
+        // could erase instead of clear
         mapGraphsNodesGUI_[graph->getName()].clear();
         mapGraphsVerticesGUI_[graph->getName()].clear();
     }
@@ -165,7 +166,7 @@ namespace View
 
         QList<QGraphicsItem*> listGUI = graphBoardScene_->items();
         for (auto&& item : listGUI) {
-            graphBoardScene_->removeItem(item);;
+            graphBoardScene_->removeItem(item); // does it delete the ptr or just remove from board?
         }
     }
 
@@ -275,9 +276,7 @@ namespace View
         ui.rootGraphLineEdit->setText("");
         ui.nodeValueSpinBox->setValue(0);
 
-        delete nodeToDelete->getNameGUI();
-        delete nodeToDelete->getDistsGUI();
-        delete nodeToDelete;
+        delete nodeToDelete; // the nameGUI and distGUI will be deleted by the class
     }
 
     void GraphViewerGUI::manageNodesSelection(NodeGUI* nodeGUI) {
@@ -331,9 +330,13 @@ namespace View
             if (vertexGUI) {
                 // the firstNode GUI is the current one, nodeGUI (the parent)
                 secondNode = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex->getNode()->getName()];
+                vertexGUI->updateGUI(nodeGUI, secondNode);
+                graphBoardScene_->update();
 
+                /*
                 vertexGUI->setLine(nodeGUI->x(), nodeGUI->y(), secondNode->x(), secondNode->y());
                 vertexGUI->getWeightGUI()->setPos(secondNode->pos());
+                */
             }
         }
         for (auto&& node : parentNodes) {
@@ -341,8 +344,12 @@ namespace View
                 VertexGUI* verterxGUIParents = mapGraphsVerticesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex];
                 if (verterxGUIParents) {
                     NodeGUI* nodeGUIParent = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][node->getName()];
+                    verterxGUIParents->updateGUI(nodeGUIParent, nodeGUI);
+                    graphBoardScene_->update();
+                    /*
                     verterxGUIParents->setLine(nodeGUIParent->x(), nodeGUIParent->y(), nodeGUI->x(), nodeGUI->y());
                     verterxGUIParents->getWeightGUI()->setPos(nodeGUI->pos());
+                    */
                 }
             }
         }
@@ -413,7 +420,9 @@ namespace View
 
         //creating the vertex weight GUI
         QGraphicsTextItem* vertexWeightGUI = new QGraphicsTextItem(QString::number(vertex->getWeight()), vertexGUI);
-        vertexWeightGUI->setPos(secondNode->pos());
+        QLineF vertexF(firstNode->x(), firstNode->y(), secondNode->x(), secondNode->y());
+        QPointF weightPos = vertexF.pointAt(0.5);
+        vertexWeightGUI->setPos(weightPos);
         vertexGUI->setWeightGUI(vertexWeightGUI);
 
         // I set the line in the constructor
@@ -430,6 +439,8 @@ namespace View
         mapGraphsVerticesGUI_[graph->getName()][vertex] = vertexGUI;
         // set the currentselectednodegui (secondNode) to unselected so we can chain connection with the manageSelection
         secondNode->setSelected(false);
+
+        //graphBoardScene_->update(); // when is update important?
     }
 
     void GraphViewerGUI::deleteVertexCmd() {
@@ -506,11 +517,24 @@ namespace View
 
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
-            QGraphicsTextItem* minDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMin()));
-            nodeGUI->setDistsGUI(minDist);
-            minDist->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
+            QGraphicsTextItem* minDistGUI;
+            int minDist = nodeGUI->getNode()->getDistForMin();
 
-            graphBoardScene_->addItem(minDist);
+            if (nodeGUI->getNode() == graphViewer_->getCurrentGraph()->getRoot()) {
+                minDistGUI = new QGraphicsTextItem("min: 0");
+            }
+            else {
+                if (minDist == INT_MAX) {
+                    minDistGUI = new QGraphicsTextItem("min: none");
+                }
+                else {
+                    minDistGUI = new QGraphicsTextItem("min: " + QString::number(minDist));
+                }
+            }
+
+            nodeGUI->setDistsGUI(minDistGUI);
+            minDistGUI->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
+            graphBoardScene_->addItem(minDistGUI);
         }
     }
 
@@ -520,11 +544,24 @@ namespace View
 
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
-            QGraphicsTextItem* maxDist = new QGraphicsTextItem(QString::number(nodeGUI->getNode()->getDistForMax()));
-            nodeGUI->setDistsGUI(maxDist);
-            maxDist->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
+            QGraphicsTextItem* maxDistGUI;
+            int maxDist = nodeGUI->getNode()->getDistForMax();
 
-            graphBoardScene_->addItem(maxDist);
+            if (nodeGUI->getNode() == graphViewer_->getCurrentGraph()->getRoot()) {
+                maxDistGUI = new QGraphicsTextItem("max: 0");
+            }
+            else {
+                if (maxDist == INT_MIN) {
+                    maxDistGUI = new QGraphicsTextItem("max: none");
+                }
+                else {
+                    maxDistGUI = new QGraphicsTextItem("max: " + QString::number(maxDist));
+                }
+            }
+
+            nodeGUI->setDistsGUI(maxDistGUI);
+            maxDistGUI->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y() - nodeGUI->getNodeNameDist());
+            graphBoardScene_->addItem(maxDistGUI);
         }
     }
 

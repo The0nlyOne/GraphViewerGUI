@@ -1,1 +1,5 @@
-Bugs when we clear a graph and do Cancel
+Bugs when we clear a graph and do cancel
+
+maxDist of Root often have a value different than 0 when it is convex graph
+
+When we delete a graph and do redoCmd the arrows of the vertex are not shown
