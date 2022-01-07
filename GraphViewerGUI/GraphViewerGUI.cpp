@@ -132,8 +132,20 @@ namespace View
         if (!graph) { return; }
 
         std::string graphName = graph->getName();
+        mapGraphsNodesGUI_[graphName].clear();
+        mapGraphsVerticesGUI_[graphName].clear();
 
-        if (graph->getNodes().size() == 0) {
+
+        for (auto&& node : graph->getNodes()) {
+            addNodeView(graph.get(), node);
+        }
+
+        for (auto&& vertex : graph->getVertices()) {
+            connectNodesView(graph.get(), vertex);
+        }
+
+        /*
+        if (graph->getNodes().size() == 0) { // for when a graph with the same name is deleted and the GUI do not update
             mapGraphsNodesGUI_[graphName].clear();
         }
         else {
