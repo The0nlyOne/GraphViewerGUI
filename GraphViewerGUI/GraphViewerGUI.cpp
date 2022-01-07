@@ -217,13 +217,16 @@ namespace View
         QObject::connect(nodeGUI, &NodeGUI::nodeReleased, this, &GraphViewerGUI::setNewNodePos);
         QObject::connect(nodeGUI, &NodeGUI::nodeSelected, this, &GraphViewerGUI::manageNodesSelection);
 
-        graphBoardScene_->addItem(nodeGUI);
-        graphBoardScene_->addItem(nodeNameGUI);
         mapGraphsNodesGUI_[graph->getName()][node->getName()] = nodeGUI;
-        
-        ui.nodeNameLineEdit->setText("");
-        // update the position of next Node
-        verifyNodePos();
+
+        if (graph->getName() == graphViewer_->getCurrentGraph()->getName()) { // in case addNodeView is called by a redo and we are not in the same graph
+            graphBoardScene_->addItem(nodeGUI);
+            graphBoardScene_->addItem(nodeNameGUI);
+            ui.nodeNameLineEdit->setText("");
+
+            // update the position of next Node
+            verifyNodePos();
+        }
     }
 
     void GraphViewerGUI::deleteNodeCmd() {
@@ -403,10 +406,13 @@ namespace View
         // connect signals
         QObject::connect(vertexGUI, &VertexGUI::isSelected, this, &GraphViewerGUI::updateSelectedVertex);
         //graphBoardScene_->addItem(vertexWeightGUI);
-        graphBoardScene_->addItem(vertexGUI);
-        mapGraphsVerticesGUI_[graph->getName()][vertex] = vertexGUI;
 
-        ui.vertexWeightSpinBox->setValue(1); // reinitialize the weight spinbox
+        if (graph->getName() == graphViewer_->getCurrentGraph()->getName()) { // in case it is called by a redo and the graph is not the same
+            graphBoardScene_->addItem(vertexGUI);
+            ui.vertexWeightSpinBox->setValue(1); // reinitialize the weight spinbox
+        }
+
+        mapGraphsVerticesGUI_[graph->getName()][vertex] = vertexGUI;
         // set the currentselectednodegui (secondNode) to unselected so we can chain connection with the manageSelection
         secondNode->setSelected(false);
     }
