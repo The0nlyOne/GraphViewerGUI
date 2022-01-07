@@ -33,6 +33,9 @@ namespace View
 		QGraphicsTextItem* getWeightGUI() { return weightGUI_; }
 		void setWeightGUI(QGraphicsTextItem* weight) { weightGUI_ = weight; }
 
+		QPolygon* getTriangleGUI() { return triangleGUI_; } // a voir
+		void setTriangleGUI(QPolygon* triangleGUI) { triangleGUI_ = triangleGUI; } // a voir
+
 		QVariant itemChange(GraphicsItemChange change, const QVariant& value) { // it is called too many time for what I am using it
 			if (change == QGraphicsItem::ItemSelectedChange) {
 				if (value.toBool()) { // is selected
@@ -51,6 +54,7 @@ namespace View
 	private:
 		NodeGUI* previousNodeGUI_ = nullptr;
 		NodeGUI* nodeGUI_ = nullptr;
+		QPolygon* triangleGUI_ = nullptr; // a voir
 		QGraphicsTextItem* weightGUI_ = nullptr;
 		Model::vertex_sptr vertex_;
 	};

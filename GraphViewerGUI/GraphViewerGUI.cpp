@@ -181,7 +181,23 @@ namespace View
             if (ui.graphsListWidget->item(i)->text().toStdString() == graph->getName()) {
                 ui.graphsListWidget->takeItem(i);
                 graphsMap_.erase(graph->getName());
+                break;
             }
+        }
+    }
+
+    void GraphViewerGUI::changeCurrentGraphView(std::string graphName) {
+        for (int i = 0; i < ui.graphsListWidget->count(); i++) {
+            if (ui.graphsListWidget->item(i)->text().toStdString() == graphName) {
+                ui.graphsListWidget->setCurrentItem(ui.graphsListWidget->item(i));
+                break;
+            }
+        }
+    }
+
+    void GraphViewerGUI::verifyCurrentGraph(Model::Graph* graph) {
+        if (graph->getName() != graphViewer_->getCurrentGraph()->getName()) {
+            changeCurrentGraphView(graph->getName()); // will send a signal that will trigger changeGraphCmd()
         }
     }
 
@@ -219,14 +235,13 @@ namespace View
 
         mapGraphsNodesGUI_[graph->getName()][node->getName()] = nodeGUI;
 
-        if (graph->getName() == graphViewer_->getCurrentGraph()->getName()) { // in case addNodeView is called by a redo and we are not in the same graph
-            graphBoardScene_->addItem(nodeGUI);
-            graphBoardScene_->addItem(nodeNameGUI);
-            ui.nodeNameLineEdit->setText("");
+        verifyCurrentGraph(graph);
+        graphBoardScene_->addItem(nodeGUI);
+        graphBoardScene_->addItem(nodeNameGUI);
+        ui.nodeNameLineEdit->setText("");
 
-            // update the position of next Node
-            verifyNodePos();
-        }
+        // update the position of next Node
+        verifyNodePos();
     }
 
     void GraphViewerGUI::deleteNodeCmd() {
@@ -241,6 +256,7 @@ namespace View
     }
 
     void GraphViewerGUI::deleteNodeView(Model::Graph* graph, Model::node_sptr node) {
+        verifyCurrentGraph(graph);
         NodeGUI* nodeToDelete = mapGraphsNodesGUI_[graph->getName()][node->getName()];
         mapGraphsNodesGUI_[graph->getName()].erase(node->getName());
         graphBoardScene_->removeItem(nodeToDelete);
@@ -407,10 +423,9 @@ namespace View
         QObject::connect(vertexGUI, &VertexGUI::isSelected, this, &GraphViewerGUI::updateSelectedVertex);
         //graphBoardScene_->addItem(vertexWeightGUI);
 
-        if (graph->getName() == graphViewer_->getCurrentGraph()->getName()) { // in case it is called by a redo and the graph is not the same
-            graphBoardScene_->addItem(vertexGUI);
-            ui.vertexWeightSpinBox->setValue(1); // reinitialize the weight spinbox
-        }
+        verifyCurrentGraph(graph);
+        graphBoardScene_->addItem(vertexGUI);
+        ui.vertexWeightSpinBox->setValue(1); // reinitialize the weight spinbox
 
         mapGraphsVerticesGUI_[graph->getName()][vertex] = vertexGUI;
         // set the currentselectednodegui (secondNode) to unselected so we can chain connection with the manageSelection
@@ -432,6 +447,7 @@ namespace View
 
         VertexGUI* vertexToDelete = mapGraphsVerticesGUI_[graph->getName()][vertex];
         if (vertexToDelete) {
+            verifyCurrentGraph(graph);
             graphBoardScene_->removeItem(vertexToDelete);
             mapGraphsVerticesGUI_[graph->getName()].erase(vertex);
             delete vertexToDelete;
@@ -485,8 +501,8 @@ namespace View
     }
 
     void GraphViewerGUI::updateMinDistsView(Model::Graph* graph) {
+        verifyCurrentGraph(graph);
         clearDistsItem();
-        if (graph->getName() != graphViewer_->getCurrentGraph()->getName()) { return; }
 
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
@@ -499,8 +515,8 @@ namespace View
     }
 
     void GraphViewerGUI::updateMaxDistsView(Model::Graph* graph) {
+        verifyCurrentGraph(graph);
         clearDistsItem();
-        if (graph->getName() != graphViewer_->getCurrentGraph()->getName()) { return; }
 
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;

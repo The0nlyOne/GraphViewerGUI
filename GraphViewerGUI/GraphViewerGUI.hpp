@@ -28,6 +28,8 @@ namespace View
         void initialize();
         void setUpConnections();
         void clearGUI();
+        void changeCurrentGraphView(std::string graphName);
+        void verifyCurrentGraph(Model::Graph* graph); // make sure that we are updating the view of the currentGraph
 
     public slots:
         void addNodeCmd();

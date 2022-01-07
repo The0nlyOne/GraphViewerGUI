@@ -1,0 +1,1 @@
+Bugs when we clear a graph and do Cancel
