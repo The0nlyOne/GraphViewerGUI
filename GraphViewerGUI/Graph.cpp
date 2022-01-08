@@ -31,7 +31,7 @@ namespace Model
 
 		nodes_.insert(pairNodeWeight.first);
 		emit nodeAddedSignal(this, pairNodeWeight.first);
-		if (pairNodeWeight.first->getVertices().size() == 0) {
+		if (pairNodeWeight.first->getVertices().size() == 0) { // can use isLeaf
 			leaves_.insert(pairNodeWeight.first);
 		}
 		addVertices(parentNode, pairNodeWeight.first, pairNodeWeight.second);
@@ -85,7 +85,7 @@ namespace Model
 			}
 			for (int i = 0; i < verticesNeighbours_[vertex->getPreviousNode()].size(); i++) {
 				if (verticesNeighbours_[vertex->getPreviousNode()][i] == vertex) {
-					verticesNeighbours_[vertex->getPreviousNode()].erase(verticesNeighbours_[vertex->getPreviousNode()].begin() + i); // erreur car je change la taille du tableau pendant la suppression
+					verticesNeighbours_[vertex->getPreviousNode()].erase(verticesNeighbours_[vertex->getPreviousNode()].begin() + i); // erreur car je change la taille du tableau pendant la suppression, fixé il me semble
 					break;
 				}
 			}

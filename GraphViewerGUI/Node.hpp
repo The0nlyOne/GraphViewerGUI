@@ -30,6 +30,10 @@ namespace Model
 
 		Node(std::string name, int value, const std::vector<std::pair<node_sptr, int>>& edges) :
 			name_(name), value_(value), vertices_(edges) {}
+		Node(node_sptr node) {
+			name_ = node->getName(); value_ = node->getValue(); vertices_ = node->getVertices();
+			pos_ = node->getPos();
+		}
 
 		void connect(const node_sptr node, const int weight);
 		void disconnect(node_sptr node, int weight);

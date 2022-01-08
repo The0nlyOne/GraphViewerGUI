@@ -41,13 +41,35 @@ namespace Model
 	{
 	public:
 		removeNode(graph_sptr graph, node_sptr nodeToRemove) :
-			addNodeCmd(graph, nodeToRemove) {}
-		void execute() override { addNodeCmd.cancel(); }
-		void cancel() override { addNodeCmd.execute(); }
-		void redo() override { addNodeCmd.cancel(); }
+			currentGraph_(graph), nodeToRemove_(nodeToRemove) {
+			nodeBeforeDelVertices_ = nodeToRemove->getVertices();
+			parentNodesBeforeDel_ = currentGraph_->getParentNodes()[nodeToRemove];
+			for (auto&& parentNode : parentNodesBeforeDel_) {
+				for (auto&& childNodeAndWeight : parentNode->getVertices()) {
+					if (childNodeAndWeight.first == nodeToRemove) {
+						nodeToRemoveParents_.push_back({ parentNode, childNodeAndWeight.second }); // do not break here cause one node can be connected multiple time to the same node
+					}
+				}
+			}
+		}
+		void execute() override { currentGraph_->deleteNode(nodeToRemove_); }
+		void cancel() override { 
+			currentGraph_->addNodeAndChildren(nodeToRemove_);
+			for (auto&& chilNodeAndWeight : nodeBeforeDelVertices_) {
+				currentGraph_->connectNodes(nodeToRemove_, chilNodeAndWeight.first, chilNodeAndWeight.second); // will call add node and vertex methods that will emit signal
+			}
+			for (auto&& parentNodeAndWeight : nodeToRemoveParents_) {
+				currentGraph_->connectNodes(parentNodeAndWeight.first, nodeToRemove_, parentNodeAndWeight.second);
+			}
+		}
+		void redo() override { currentGraph_->deleteNode(nodeToRemove_); }
 
 	private:
-		AddNode addNodeCmd; //removeNode will be the inverse of AddNode
+		graph_sptr currentGraph_;
+		node_sptr nodeToRemove_;
+		std::vector<std::pair<node_sptr, int>> nodeBeforeDelVertices_;
+		std::vector<node_sptr> parentNodesBeforeDel_;
+		std::vector<std::pair<node_sptr, int>> nodeToRemoveParents_;
 	};
 
 	class ConnectNodes : public Command
