@@ -20,14 +20,14 @@ public:
 		if (outFile.is_open()) {
 			Model::GraphViewer* graphViewer = Model::GraphViewer::getGraphViewer();
 			for (auto&& graph : graphViewer->getGraphsVector()) {
-				outFile << "Graph " << graph->getName() << " " << std::endl; // important to put space at the end for the delimiter
+				outFile << "Graph" << delimiter_ << graph->getName() << delimiter_ << std::endl; // important to put delimiter at the end to split the line correctly
 				for (auto&& node : graph->getNodes()) {
-					outFile << "Node " << node->getName() << " " << node->getPos().first << " " << node->getPos().second << " " << std::endl;
+					outFile << "Node" << delimiter_ << node->getName() << delimiter_ << node->getPos().first << delimiter_ << node->getPos().second << delimiter_ << std::endl;
 				}
 				for (auto&& vertex : graph->getVertices()) {
-					outFile << "Vertex " << vertex->getPreviousNode()->getName() << " " << vertex->getNode()->getName() << " " << vertex->getWeight() << " " << std::endl;
+					outFile << "Vertex" << delimiter_ << vertex->getPreviousNode()->getName() << delimiter_ << vertex->getNode()->getName() << delimiter_ << vertex->getWeight() << delimiter_ << std::endl;
 				}
-				outFile << "GraphCompleted " << std::endl;
+				outFile << "GraphCompleted" << delimiter_ << std::endl;
 			}
 		}
 		outFile.close();
@@ -89,5 +89,5 @@ private:
 
 	Model::graph_sptr currentGraph_ = nullptr;
 	std::vector<std::string> lineWords_;
-	std::string delimiter_ = " ";
+	std::string delimiter_ = "<!>";
 };

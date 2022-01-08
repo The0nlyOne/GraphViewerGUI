@@ -1,13 +1,29 @@
-Graph Graph01 
-Node A -19 -166 
-Node B -173 21 
-Node C 128 18 
-Vertex A B 1 
-Vertex B C 1 
-Vertex C A 1 
-GraphCompleted 
-Graph Graph02 
-Node A -191 -37 
-Node B 41 -30 
-Vertex A B 1 
-GraphCompleted 
+Graph<!>Steal The Shirt Mission<!>
+Node<!>Begining<!>-6<!>-167<!>
+Node<!>Steal The Shirt<!>-127<!>-62<!>
+Node<!>Buy The Shirt<!>101<!>-88<!>
+Node<!>Escape<!>-230<!>30<!>
+Node<!>Leave Gamabutso<!>-173<!>135<!>
+Node<!>Wait The Time<!>-70<!>7<!>
+Node<!>Kill Gamabutso<!>-317<!>131<!>
+Vertex<!>Begining<!>Steal The Shirt<!>-1<!>
+Vertex<!>Begining<!>Buy The Shirt<!>4<!>
+Vertex<!>Steal The Shirt<!>Escape<!>-1<!>
+Vertex<!>Steal The Shirt<!>Wait The Time<!>1<!>
+Vertex<!>Escape<!>Kill Gamabutso<!>-2<!>
+Vertex<!>Escape<!>Leave Gamabutso<!>1<!>
+GraphCompleted<!>
+Graph<!>Troubled Marine Mission<!>
+Node<!>Begining<!>-105<!>-42<!>
+Node<!>I deserve<!>-203<!>88<!>
+Node<!>He deserve<!>-16<!>73<!>
+Vertex<!>Begining<!>I deserve<!>-1<!>
+Vertex<!>Begining<!>He deserve<!>1<!>
+GraphCompleted<!>
+Graph<!>Find The Bag Mission<!>
+Node<!>Begining<!>-128<!>-84<!>
+Node<!>Keep The Bag<!>-217<!>28<!>
+Node<!>Give Back The Bag<!>-54<!>18<!>
+Vertex<!>Begining<!>Keep The Bag<!>-1<!>
+Vertex<!>Begining<!>Give Back The Bag<!>1<!>
+GraphCompleted<!>
