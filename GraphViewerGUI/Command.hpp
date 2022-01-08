@@ -199,14 +199,12 @@ namespace Model
 		ClearGraph(GraphViewer* graphViewer, graph_sptr graphToClear, graph_sptr graphToSwapWith) :
 			graphViewer_(graphViewer), graphToClear_(graphToClear), graphToSwapWith_(graphToSwapWith) {}
 		void execute() override {
-			//graphToSwapWith_ = std::make_shared<Graph>(graphToClear_->getName());
 			graphViewer_->clearGraph(graphToSwapWith_);
 		}
 		void cancel() override {
 			graphViewer_->clearGraph(graphToClear_);
 		}
 		void redo() override {
-			//graphToSwapWith_ = std::make_shared<Graph>(graphToClear_->getName());
 			graphViewer_->clearGraph(graphToSwapWith_);
 		}
 	private:
