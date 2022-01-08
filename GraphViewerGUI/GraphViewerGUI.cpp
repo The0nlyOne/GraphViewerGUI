@@ -553,7 +553,7 @@ namespace View
         if (!graphViewer_->getCurrentGraph()) { return; }
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
-            if (nodeGUI->getDistsGUI()) {
+            if (nodeGUI && nodeGUI->getDistsGUI()) { // first attempt in fixing the nodeGUI exception thrown
                 delete nodeGUI->getDistsGUI();
                 nodeGUI->setDistsGUI(nullptr);
             }
