@@ -37,8 +37,8 @@ namespace View
         QObject::connect(ui.deleteGraphButton, SIGNAL(clicked()), this, SLOT(removeGraphCmd()));
         QObject::connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelCmd()));
         QObject::connect(ui.redoButton, SIGNAL(clicked()), this, SLOT(redoCmd()));
-        QObject::connect(ui.saveFileButton, SIGNAL(clicked()), this, SLOT(saveFile()));
-        QObject::connect(ui.openFileButton, SIGNAL(clicked()), this, SLOT(openFile()));
+        QObject::connect(ui.saveFileButton, SIGNAL(clicked()), this, SLOT(saveFileCmd()));
+        QObject::connect(ui.openFileButton, SIGNAL(clicked()), this, SLOT(openFileCmd()));
 
         // listConnection
         QObject::connect(ui.graphsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
@@ -626,11 +626,16 @@ namespace View
         invoker_->redo();
     }
 
-    void GraphViewerGUI::saveFile() {
-        fileManager_->saveFile("test.txt");
+    void GraphViewerGUI::saveFileCmd() {
+        QString filename = QFileDialog::getSaveFileName(
+            this, tr("Open FIle"), "C://", tr("Graph Viewer Files (*.grv);; Text Files (*.txt)"));
+
+        fileManager_->saveFile(filename.toStdString());
     }
 
-    void GraphViewerGUI::openFile() {
-        fileManager_->loadFile("test.txt");
+    void GraphViewerGUI::openFileCmd() {
+        QString filename = QFileDialog::getOpenFileName(
+            this, tr("Open FIle"), "C://", tr("Graph Viewer Files (*.grv);; Text Files (*.txt)"));
+        fileManager_->loadFile(filename.toStdString());
     }
 }

@@ -16,6 +16,7 @@
 #include "qgraphicsscene.h"
 #include "qgraphicsitem.h"
 #include "qshortcut.h"
+#include "qfiledialog.h"
 #pragma pop()
 
 namespace View
@@ -68,8 +69,8 @@ namespace View
         void cancelCmd();
         void redoCmd();
 
-        void saveFile();
-        void openFile();
+        void saveFileCmd();
+        void openFileCmd();
 
     private:
         Ui::GraphViewerGUIClass ui;
