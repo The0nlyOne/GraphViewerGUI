@@ -628,14 +628,14 @@ namespace View
 
     void GraphViewerGUI::saveFileCmd() {
         QString filename = QFileDialog::getSaveFileName(
-            this, tr("Open FIle"), "C://", tr("Graph Viewer Files (*.grv)"));
+            this, tr("Open FIle"), "./", tr("Graph Viewer Files (*.grv)"));
 
         fileManager_->saveFile(filename.toStdString());
     }
 
     void GraphViewerGUI::openFileCmd() {
         QString filename = QFileDialog::getOpenFileName(
-            this, tr("Open FIle"), "C://", tr("Graph Viewer Files (*.grv)"));
+            this, tr("Open FIle"), "./", tr("Graph Viewer Files (*.grv)"));
         fileManager_->loadFile(filename.toStdString());
     }
 }
