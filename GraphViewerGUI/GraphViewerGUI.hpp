@@ -5,6 +5,7 @@
 #include "Graph.hpp"
 #include "NodeGUI.hpp"
 #include "VertexGUI.hpp"
+#include "FileManager.hpp"
 #include <queue>
 
 #pragma warning(push, 0) // remove the useless warning of Qt?
@@ -67,6 +68,9 @@ namespace View
         void cancelCmd();
         void redoCmd();
 
+        void saveFile();
+        void openFile();
+
     private:
         Ui::GraphViewerGUIClass ui;
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();
@@ -81,6 +85,7 @@ namespace View
         VertexGUI* selectedVertex_ = nullptr;
 
         Model::GraphViewer* graphViewer_ = Model::GraphViewer::getGraphViewer();
+        FileManager* fileManager_ = FileManager::getFileManager();
         QGraphicsScene* graphBoardScene_ = nullptr;
         QGraphicsView* graphBoardView_ = nullptr;
         QPoint newNodePos_;

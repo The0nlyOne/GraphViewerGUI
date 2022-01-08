@@ -1,0 +1,13 @@
+Graph Graph01 
+Node A -19 -166 
+Node B -173 21 
+Node C 128 18 
+Vertex A B 1 
+Vertex B C 1 
+Vertex C A 1 
+GraphCompleted 
+Graph Graph02 
+Node A -191 -37 
+Node B 41 -30 
+Vertex A B 1 
+GraphCompleted 

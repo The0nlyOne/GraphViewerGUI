@@ -1,4 +1,5 @@
 #include "GraphViewerGUI.hpp"
+#include "FileManager.hpp"
 
 namespace View
 {
@@ -36,6 +37,8 @@ namespace View
         QObject::connect(ui.deleteGraphButton, SIGNAL(clicked()), this, SLOT(removeGraphCmd()));
         QObject::connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(cancelCmd()));
         QObject::connect(ui.redoButton, SIGNAL(clicked()), this, SLOT(redoCmd()));
+        QObject::connect(ui.saveFileButton, SIGNAL(clicked()), this, SLOT(saveFile()));
+        QObject::connect(ui.openFileButton, SIGNAL(clicked()), this, SLOT(openFile()));
 
         // listConnection
         QObject::connect(ui.graphsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
@@ -53,6 +56,9 @@ namespace View
     }
 
     void GraphViewerGUI::connectGraph(Model::Graph* graph) {
+        // protection
+        if (!graph) { return; }
+
         QObject::connect(graph, &Model::Graph::nodeAddedSignal, this, &GraphViewerGUI::addNodeView);
         QObject::connect(graph, &Model::Graph::nodeDeletedSignal, this, &GraphViewerGUI::deleteNodeView);
         QObject::connect(graph, &Model::Graph::vertexAddedSignal, this, &GraphViewerGUI::connectNodesView);
@@ -78,6 +84,11 @@ namespace View
     }
 
     void GraphViewerGUI::addGraphView(Model::graph_sptr graph) {
+        // protection
+        if (!graph) { return; }
+
+        connectGraph(graph.get()); // in case we load the graph with a file and did not go through the cmd
+
         std::string graphName = graph->getName();
         ui.graphsListWidget->addItem(QString::fromStdString(graphName));
         graphsMap_[graphName] = graph;
@@ -198,6 +209,8 @@ namespace View
     }
 
     void GraphViewerGUI::verifyCurrentGraph(Model::Graph* graph) {
+        if (!graph) { return; }
+
         if (graph->getName() != graphViewer_->getCurrentGraph()->getName()) {
             changeCurrentGraphView(graph->getName()); 
         }
@@ -219,6 +232,14 @@ namespace View
     }
 
     void GraphViewerGUI::addNodeView(Model::Graph* graph, Model::node_sptr node) {
+        // protections
+        if (!graph || !node) { return; }
+
+        // verify that the node is not already in the view, in case it adds twice...
+        if (mapGraphsNodesGUI_[graph->getName()][node->getName()]) { return; }
+
+        verifyCurrentGraph(graph);
+
         // creating the node and setting its position
         NodeGUI* nodeGUI = new NodeGUI(node);
         int nodeX = node->getPos().first;
@@ -271,8 +292,16 @@ namespace View
     }
 
     void GraphViewerGUI::deleteNodeView(Model::Graph* graph, Model::node_sptr node) {
+        // protections
+        if (!graph || !node) { return; }
+
         verifyCurrentGraph(graph);
+
         NodeGUI* nodeToDelete = mapGraphsNodesGUI_[graph->getName()][node->getName()];
+
+        // protection in case the method is called twice in a row. Still don't know why.
+        if (!nodeToDelete) { return; }
+
         mapGraphsNodesGUI_[graph->getName()].erase(node->getName());
         graphBoardScene_->removeItem(nodeToDelete);
 
@@ -329,6 +358,9 @@ namespace View
     }
 
     void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
+        // protection
+        if (!nodeGUI) { return; }
+
         newNodePos_.setX(x); newNodePos_.setY(y);
         nodeGUI->getNode()->setPos(x, y);
         nodeGUI->getNameGUI()->setPos(nodeGUI->x() + nodeGUI->getNodeNameDist(), nodeGUI->y());
@@ -419,6 +451,13 @@ namespace View
     }
 
     void GraphViewerGUI::connectNodesView(Model::Graph* graph, Model::vertex_sptr vertex) {
+        if (!graph || !vertex) { return; }
+
+        verifyCurrentGraph(graph);
+
+        // verify that the vertex is not already in the view, in case it adds twice...
+        if (mapGraphsVerticesGUI_[graph->getName()][vertex]) { return; }
+
         // creating the vertex and setting up the position
         NodeGUI* firstNode = mapGraphsNodesGUI_[graph->getName()][vertex->getPreviousNode()->getName()];
         NodeGUI* secondNode = mapGraphsNodesGUI_[graph->getName()][vertex->getNode()->getName()];
@@ -460,19 +499,23 @@ namespace View
     }
 
     void GraphViewerGUI::deleteVertexView(Model::Graph* graph, Model::vertex_sptr vertex) {
+        if (!graph || !vertex) { return; }
+
         ui.vertexSelectedLineEdit->setText("");
 
         VertexGUI* vertexToDelete = mapGraphsVerticesGUI_[graph->getName()][vertex];
-        if (vertexToDelete) {
-            verifyCurrentGraph(graph);
-            graphBoardScene_->removeItem(vertexToDelete);
-            mapGraphsVerticesGUI_[graph->getName()].erase(vertex);
-            delete vertexToDelete;
-            selectedVertex_ = nullptr;
-        }
+        if (!vertexToDelete) { return; }
+
+        verifyCurrentGraph(graph);
+        graphBoardScene_->removeItem(vertexToDelete);
+        mapGraphsVerticesGUI_[graph->getName()].erase(vertex);
+        delete vertexToDelete;
+        selectedVertex_ = nullptr;
     }
 
     void GraphViewerGUI::updateSelectedVertex(VertexGUI* vertexGUI, bool isSelected) {
+        if (!vertexGUI) { return; }
+
         if (isSelected) {
             selectedVertex_ = vertexGUI;
             std::string previousNodeName = vertexGUI->getVertex()->getPreviousNode()->getName();
@@ -518,6 +561,8 @@ namespace View
     }
 
     void GraphViewerGUI::updateMinDistsView(Model::Graph* graph) {
+        if (!graph) { return; }
+
         verifyCurrentGraph(graph);
         clearDistsItem();
 
@@ -545,6 +590,8 @@ namespace View
     }
 
     void GraphViewerGUI::updateMaxDistsView(Model::Graph* graph) {
+        if (!graph) { return; }
+
         verifyCurrentGraph(graph);
         clearDistsItem();
 
@@ -577,5 +624,13 @@ namespace View
 
     void GraphViewerGUI::redoCmd() {
         invoker_->redo();
+    }
+
+    void GraphViewerGUI::saveFile() {
+        fileManager_->saveFile("test.txt");
+    }
+
+    void GraphViewerGUI::openFile() {
+        fileManager_->loadFile("test.txt");
     }
 }
