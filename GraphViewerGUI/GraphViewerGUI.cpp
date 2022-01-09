@@ -39,6 +39,7 @@ namespace View
         QObject::connect(ui.redoButton, SIGNAL(clicked()), this, SLOT(redoCmd()));
         QObject::connect(ui.saveFileButton, SIGNAL(clicked()), this, SLOT(saveFileCmd()));
         QObject::connect(ui.openFileButton, SIGNAL(clicked()), this, SLOT(openFileCmd()));
+        QObject::connect(ui.zoomHSlider, SIGNAL(valueChanged(int)), this, SLOT(zoomView(int)));
 
         // listConnection
         QObject::connect(ui.graphsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
@@ -634,5 +635,10 @@ namespace View
         QString filename = QFileDialog::getOpenFileName(
             this, tr("Open FIle"), "./", tr("Graph Viewer Files (*.grv)"));
         fileManager_->loadFile(filename.toStdString());
+    }
+
+    void GraphViewerGUI::zoomView(int value) {
+        previousZoomValue_ < value ? graphBoardView_->scale(1.05, 1.05) : graphBoardView_->scale(1 / 1.05, 1 / 1.05);
+        previousZoomValue_ = value;
     }
 }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1299</width>
-    <height>717</height>
+    <width>1168</width>
+    <height>829</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -74,28 +74,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="zoomDoubleSpinBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>20</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>49</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QSlider" name="zoomHSlider">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="minimumSize">
          <size>
@@ -109,8 +90,29 @@
           <height>16777215</height>
          </size>
         </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+        <property name="value">
+         <number>50</number>
+        </property>
+        <property name="sliderPosition">
+         <number>50</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedControls">
+         <bool>false</bool>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::NoTicks</enum>
         </property>
        </widget>
       </item>
@@ -148,8 +150,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>811</width>
-         <height>553</height>
+         <width>680</width>
+         <height>665</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -177,7 +179,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1299</width>
+     <width>1168</width>
      <height>21</height>
     </rect>
    </property>

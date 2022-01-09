@@ -70,6 +70,8 @@ namespace View
         void saveFileCmd();
         void openFileCmd();
 
+        void zoomView(int value);
+
     private:
         Ui::GraphViewerGUIClass ui;
         Model::Invoker* invoker_ = Model::Invoker::getInvoker();
@@ -90,5 +92,6 @@ namespace View
         QPoint newNodePos_;
 
         int selectedNodeCount_ = 0; // to know the first and second Node Selected
+        int previousZoomValue_ = 0;
     };
 }
