@@ -8,6 +8,8 @@
 
 namespace Model
 {
+
+	// not used anymore I believe
 	class SameName : public std::logic_error
 	{
 	public:

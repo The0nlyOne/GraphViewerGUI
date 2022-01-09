@@ -29,7 +29,7 @@ namespace View {
 		updateArrowAndWeightGUI(x1, y1, x2, y2);
 	}
 
-	// could set a max and min for arrom lenght
+	// could set a max and min for arrow lenght
 	void VertexGUI::updateArrowAndWeightGUI(qreal x1, qreal y1, qreal x2, qreal y2) {
 		QLineF vertexF(x1, y1, x2, y2);
 

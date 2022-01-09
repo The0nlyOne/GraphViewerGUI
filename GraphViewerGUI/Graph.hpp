@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-
 #include <unordered_set>
 #include <unordered_map>
 #include <algorithm>
@@ -42,8 +41,6 @@ namespace Model
 			addNodeAndChildren(root_);
 		}
 
-		// void clearGraph();
-
 		void addNodeAndChildren(node_sptr node);
 		void addAllNodesAndVerticess(node_sptr parentNode, std::pair<node_sptr, int> pairNodeWeight);
 		void addVertices(node_sptr parentNode, node_sptr childNode, int weight);
@@ -82,8 +79,8 @@ namespace Model
 		void resetDistForMax();
 		void resetPrevForMax();
 
-		void maxHeap(std::vector<vertex_sptr>* vector); // can be global method?
-		void minHeap(std::vector<vertex_sptr>* vector);
+		void maxHeap(std::vector<vertex_sptr>* vector); // can be global method? Not used now but can be useful
+		void minHeap(std::vector<vertex_sptr>* vector); // can be global method? Not used now but can be useful
 
 		node_sptr getRoot() { return root_; }
 		void  setRoot(node_sptr root) { root_ = root; }
@@ -96,17 +93,11 @@ namespace Model
 		std::string getName() { return name_; }
 		void setName(std::string name) { name_ = name; }
 
-		void showMinRoute(node_sptr node); // does not work for some convexe/cyclique graph value?
-
-		void showMaxRoute(node_sptr node);  // does not work for some convexe/cyclique graph value?
-
-
 	signals:
 		void nodeAddedSignal(Graph* graph, node_sptr node);
 		void nodeDeletedSignal(Graph* graph, node_sptr node);
 		void vertexAddedSignal(Graph* graph, vertex_sptr vertex);
 		void vertexDeletedSignal(Graph* graph, vertex_sptr vertex);
-		//void graphCleared(Graph* graph);
 		void minDistUpdatedSignal(Graph* graph);
 		void maxDistUpdatedSignal(Graph* graph);
 
@@ -115,7 +106,7 @@ namespace Model
 		node_sptr root_; // use unique_ptr instead?
 		std::unordered_set<node_sptr> nodes_; // using unordered set because most of its method are O(1) for my utilisation
 		std::unordered_set<node_sptr> leaves_; // and because when the graph is convexe, other containers will have duplicate.
-												// Could use the wentThrough attribute to fix that but it will be more line of code, and time complexity
+												// Could use a wentThrough attribute to fix that but it will be more line of code, and time complexity
 		std::vector<vertex_sptr> vertices_;
 		std::unordered_map<node_sptr, std::vector<vertex_sptr>> verticesNeighbours_;
 		std::unordered_map<node_sptr, std::vector<node_sptr>> parentNodes_;

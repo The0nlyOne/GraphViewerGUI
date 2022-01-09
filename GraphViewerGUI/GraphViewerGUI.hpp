@@ -2,11 +2,9 @@
 
 #include "Invoker.hpp"
 #include "GraphViewer.hpp"
-#include "Graph.hpp"
 #include "NodeGUI.hpp"
 #include "VertexGUI.hpp"
 #include "FileManager.hpp"
-#include <queue>
 
 #pragma warning(push, 0) // remove the useless warning of Qt?
 #include <QtWidgets/QMainWindow>

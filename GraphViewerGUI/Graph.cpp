@@ -13,7 +13,6 @@ namespace Model
 		// even if node is a set, we must throw same name error because two different pointers can have nodes with same name
 		for (auto&& existingNode : nodes_) {
 			if (existingNode->getName() == node->getName()) {
-				//throw SameName("A Node with this name already exist.\n");
 				canAddNode = false;
 			}
 		}
@@ -89,7 +88,7 @@ namespace Model
 					break;
 				}
 			}
-			updateMinDist(root_);  // use bool isMin to know which function to call between updateMaxDist and updateMinDist
+			updateMinDist(root_);  // could use bool isMin to know which function to call between updateMaxDist and updateMinDist
 			updateMaxDist(root_);
 			emit vertexDeletedSignal(this, vertex);
 		}
@@ -360,24 +359,6 @@ namespace Model
 
 	vertex_sptr Graph::getLastVertex(std::vector<vertex_sptr>* vertexVector) { // useful to test if the heapify have the lastvertex in correct order
 		return !(vertexVector->empty()) ? vertexVector->back() : nullptr;
-	}
-
-	void Graph::showMinRoute(node_sptr node) { // does not work for convexe/cyclique graph with negative value
-		if (!node || node == root_) {
-			std::cout << std::endl;
-			return;
-		}
-		std::cout << node->getName() << " <- ";
-		showMinRoute(node->getPrevNodeMin());
-	}
-
-	void Graph::showMaxRoute(node_sptr node) {  // does not work for some convexe/cyclique graph value?
-		if (!node || node == root_) {
-			std::cout << std::endl;
-			return;
-		}
-		std::cout << node->getName() << " <- ";
-		showMaxRoute(node->getPrevNodeMax());
 	}
 
 }

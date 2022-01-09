@@ -26,38 +26,9 @@ namespace Model
 			emit graphChangedSignal(graph);
 		}
 
-		void addGraph(graph_sptr graphToAdd) {
-			for (int i = 0; i < graphsVector_.size(); i++) {
-				if (graphsVector_[i]->getName() == graphToAdd->getName()) {
-					graphsVector_.erase(graphsVector_.begin() + i);
-					break;
-				}
-			}
-			graphsVector_.push_back(graphToAdd);
-			emit graphAddedSignal(graphToAdd);
-		}
-
-		void removeGraph(graph_sptr graphToRemove) {
-			for (int i = 0; i < graphsVector_.size(); i++) {
-				if (graphsVector_[i] == graphToRemove) {
-					graphsVector_.erase(graphsVector_.begin() + i);
-					break;
-				}
-			}
-			emit graphRemovedSignal(graphToRemove);
-		}
-
-		void clearGraph(graph_sptr graphToSwapWith) {
-			for (int i = 0; i < graphsVector_.size(); i++) {
-				if (graphsVector_[i]->getName() == graphToSwapWith->getName()) {
-					graphsVector_.erase(graphsVector_.begin() + i);
-					break;
-				}
-			}
-			graphsVector_.push_back(graphToSwapWith);
-			currentGraph_ = graphToSwapWith;
-			emit graphCleared(graphToSwapWith);
-		}
+		void addGraph(graph_sptr graphToAdd);
+		void removeGraph(graph_sptr graphToRemove);
+		void clearGraph(graph_sptr graphToSwapWith);
 
 		graph_sptr getCurrentGraph() { return currentGraph_; }
 		std::vector<graph_sptr> getGraphsVector() { return graphsVector_; }
@@ -67,6 +38,7 @@ namespace Model
 		void graphAddedSignal(graph_sptr graphAdded);
 		void graphRemovedSignal(graph_sptr graphRemoved);
 		void graphCleared(graph_sptr graphToReplaceWith);
+
 	private:
 		GraphViewer() = default;
 		std::vector<graph_sptr> graphsVector_;

@@ -75,6 +75,9 @@
       </item>
       <item>
        <widget class="QDoubleSpinBox" name="zoomDoubleSpinBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -91,6 +94,9 @@
       </item>
       <item>
        <widget class="QSlider" name="zoomHSlider">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -304,6 +310,9 @@
      </property>
     </widget>
     <widget class="QPushButton" name="clearGraphButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -564,6 +573,9 @@
      <property name="text">
       <string>SAVE</string>
      </property>
+     <property name="shortcut">
+      <string>Ctrl+S</string>
+     </property>
     </widget>
     <widget class="QPushButton" name="cancelButton">
      <property name="geometry">
@@ -626,6 +638,9 @@
      </property>
      <property name="text">
       <string>OPEN</string>
+     </property>
+     <property name="shortcut">
+      <string>Ctrl+O</string>
      </property>
     </widget>
    </widget>

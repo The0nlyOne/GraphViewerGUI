@@ -11,7 +11,8 @@
 
 namespace View 
 {
-	class NodeGUI : public QObject, public QGraphicsItem { //derive from QGraphicsObject instead of QGraphicsItem so that we can use signals and slots with it.
+
+	class NodeGUI : public QObject, public QGraphicsItem { //we can derive from QGraphicsObject instead of QGraphicsItem so we can use signals and slots with it and remove QObject
 		Q_OBJECT
 	public:
 		NodeGUI(Model::node_sptr node) :
@@ -32,27 +33,9 @@ namespace View
 
 		Model::node_sptr getNode() { return node_; }
 		
-		QVariant itemChange(GraphicsItemChange change, const QVariant& value) { // Cant add it in cpp file for some reason
-			if (change == QGraphicsItem::ItemSelectedChange) {
-				if (value.toBool()) { // is selected
-					brush_ = QBrush(Qt::yellow);
-					update();
-					emit nodeSelected(this);
-				}
-				else { // isNotSelected check if amount of selected Node > 2
-					if (brush_.color() != Qt::red) {
-						brush_ = QBrush(Qt::darkCyan);
-						update();
-					}
-				}
-			}
-			return QGraphicsItem::itemChange(change, value);
-		}
+		QVariant itemChange(GraphicsItemChange change, const QVariant& value);
 
-		void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
-			QGraphicsItem::mouseReleaseEvent(event);
-			emit nodeReleased(this, this->x(), this->y()); 
-		}
+		void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
 
 		void setNameGUI(QGraphicsTextItem* nameGUI) { nameGUI_ = nameGUI; }
 		QGraphicsTextItem* getNameGUI() {  return nameGUI_; }

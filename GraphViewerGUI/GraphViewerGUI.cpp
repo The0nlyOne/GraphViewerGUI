@@ -378,7 +378,7 @@ namespace View
                 // the firstNode GUI is the current one, nodeGUI (the parent)
                 secondNode = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex->getNode()->getName()];
                 vertexGUI->updateGUI(nodeGUI, secondNode);
-                graphBoardScene_->update(); // what is the use of update
+                graphBoardScene_->update(); // what is the use of update..
             }
         }
         for (auto&& node : parentNodes) {
@@ -429,8 +429,8 @@ namespace View
                 }
             }
             countOfLoop++;
-            if (countOfLoop == 50) {
-                // throw error
+            if (countOfLoop == 100) {
+                // throw error, hopefully it will never happen
             }
         }
     }
@@ -475,7 +475,6 @@ namespace View
 
         // connect signals
         QObject::connect(vertexGUI, &VertexGUI::isSelected, this, &GraphViewerGUI::updateSelectedVertex);
-        //graphBoardScene_->addItem(vertexWeightGUI);
 
         verifyCurrentGraph(graph);
         graphBoardScene_->addItem(vertexGUI);
@@ -484,8 +483,6 @@ namespace View
         mapGraphsVerticesGUI_[graph->getName()][vertex] = vertexGUI;
         // set the currentselectednodegui (secondNode) to unselected so we can chain connection with the manageSelection
         secondNode->setSelected(false);
-
-        //graphBoardScene_->update(); // when is update important?
     }
 
     void GraphViewerGUI::deleteVertexCmd() {
@@ -553,7 +550,7 @@ namespace View
         if (!graphViewer_->getCurrentGraph()) { return; }
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()]) {
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
-            if (nodeGUI && nodeGUI->getDistsGUI()) { // first attempt in fixing the nodeGUI exception thrown
+            if (nodeGUI && nodeGUI->getDistsGUI()) {
                 delete nodeGUI->getDistsGUI();
                 nodeGUI->setDistsGUI(nullptr);
             }
