@@ -331,17 +331,17 @@ namespace View
         ui.nodeValueSpinBox->setValue(nodeGUI->getNode()->getValue());
         switch (selectedNodeCount_)
         {
-        case 0:
+        case 0: // no nodes selected
             selectedNodeCount_++;
             ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
             previousFirstConnectedNode_ = nodeGUI;
             break;
-        case 1:
+        case 1: // 1 node is selected
             selectedNodeCount_++;
             ui.secondNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
             previousSecondConnectedNode_ = nodeGUI;
             break;
-        case 2:
+        case 2: // 2 nodes is selected
             selectedNodeCount_ = 1;
             ui.firstNodeSelectedLineEdit->setText(QString::fromStdString(nodeGUI->getNode()->getName()));
             ui.secondNodeSelectedLineEdit->setText("");

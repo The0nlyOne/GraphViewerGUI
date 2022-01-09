@@ -36,7 +36,6 @@ namespace Model
 		node_sptr nodeToAdd_;
 	};
 
-	//inverse of AddNode
 	class removeNode : public Command
 	{
 	public:
@@ -99,6 +98,7 @@ namespace Model
 		ConnectNodes connectNodesCmd_; // DisconnectNodes is inverse of ConnectNode
 	};
 
+	// Not used
 	class BiConnectNodes : public Command
 	{
 	public:
@@ -117,6 +117,7 @@ namespace Model
 		int weight_;
 	};
 
+	// Not used
 	class BiDisconnectNodes : public Command
 	{
 	public:
@@ -129,6 +130,7 @@ namespace Model
 		BiConnectNodes biConnectNodesCmd_; // BiDisconnectNodes is inverse of ConnectNode
 	};
 
+	// Not used
 	class DisconnectVertex : public Command
 	{
 	public:
@@ -143,6 +145,7 @@ namespace Model
 		vertex_sptr vertexToDisconnect_;
 	};
 
+	// Not used
 	class ConnectVertex : public Command // more or less useless
 	{
 	public:
@@ -156,6 +159,7 @@ namespace Model
 		DisconnectVertex disconnectVertexCmd_; // connectVertex is inverse of DisconnectVertex
 	};
 
+	// Not used
 	class UpdateMinDist : public Command  // should it be a cmd?? since we can't cancel...
 	{
 	public:
@@ -169,6 +173,7 @@ namespace Model
 		node_sptr root_;
 	};
 
+	// Not used
 	class UpdateMaxDist : public Command // should it be a cmd?? since we can't cancel...
 	{
 	public:
