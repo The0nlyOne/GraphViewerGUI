@@ -1,2 +1,0 @@
-improve how the cancel of delete node is done (take into consideration
-	the connected vertices
