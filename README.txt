@@ -9,6 +9,8 @@ Even if I believe that it will 98% of the time give the correct distance,
 the distance might be wrong if your graph is very complex and happen to have 
 a property that I did not think of.
 
+The program won't work correctly for values above 2047483647 and below -2047483648
+
 Shortcuts:
 "Ctrl + z" to cancel
 "Ctrl + Shift + z" or "Ctrl + y" to Redo

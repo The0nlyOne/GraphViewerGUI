@@ -23,7 +23,7 @@ namespace Model
 	void Node::updateDistFoMin() {
 		for (auto&& distance : minDistances_) {
 			if (distance == INT_MAX || distance == INT_MIN
-				|| distance < -214748364) { continue; } // filtering unwanted and unlikely values
+				|| distance < -2047483648) { continue; } // filtering unwanted and unlikely values
 			if (distance < distForMin_) {
 				distForMin_ = distance;
 			}
@@ -33,7 +33,7 @@ namespace Model
 	void Node::updateDistForMax() {
 		for (auto&& distance : maxDistances_) {
 			if (distance == INT_MAX || distance == INT_MIN
-				|| distance > +214748364) { continue; } // filtering unwanted and unlikely values
+				|| distance > +2047483647) { continue; } // filtering unwanted and unlikely values
 			if (distance > distForMax_) {
 				distForMax_ = distance;
 			}
