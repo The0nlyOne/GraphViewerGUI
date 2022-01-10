@@ -1,8 +1,8 @@
 Graph Viewer Tool - Made by Nde Tsakou, Homer
 
 Disclaimer:
-Even if it is stable it might crash sometime, make sure to save your graph
-regularly if you use this app.
+Even if it is stable it might crash in rare occasions, make sure to save your graph
+regularly just in case.
 Graphics bugs can happen but they are not harmful for the app.
 
 Even if I believe that it will 98% of the time give the correct distance,
@@ -10,6 +10,10 @@ the distance might be wrong if your graph is very complex and happen to have
 a property that I did not think of.
 
 The program won't work correctly for values above 2047483647 and below -2047483648
+
+How to use:
+You must create a graph first before adding nodes. Then select two node to connect
+with the weight of your choice.
 
 Shortcuts:
 "Ctrl + z" to cancel
