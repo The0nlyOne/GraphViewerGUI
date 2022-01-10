@@ -565,6 +565,7 @@ namespace View
         clearDistsItem();
 
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
+            if (!pairNameAndnodeGUI.second) { continue; }
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
             QGraphicsTextItem* minDistGUI;
             int minDist = nodeGUI->getNode()->getDistForMin();
@@ -594,6 +595,7 @@ namespace View
         clearDistsItem();
 
         for (auto&& pairNameAndnodeGUI : mapGraphsNodesGUI_[graph->getName()]) {
+            if (!pairNameAndnodeGUI.second) { continue; }
             NodeGUI* nodeGUI = pairNameAndnodeGUI.second;
             QGraphicsTextItem* maxDistGUI;
             int maxDist = nodeGUI->getNode()->getDistForMax();
