@@ -106,6 +106,7 @@ namespace View
         }
         else {
             clearGUI();
+            graphViewer_->changeGraph(nullptr);
         }
     }
 
