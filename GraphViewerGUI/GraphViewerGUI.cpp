@@ -356,7 +356,6 @@ namespace View
             break;
         }
         nodeGUI->setBrush(QBrush(Qt::red));
-        update();
     }
 
     void GraphViewerGUI::setNewNodePos(NodeGUI* nodeGUI, int x, int y) {
@@ -380,7 +379,6 @@ namespace View
                 // the firstNode GUI is the current one, nodeGUI (the parent)
                 secondNode = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][vertex->getNode()->getName()];
                 vertexGUI->updateGUI(nodeGUI, secondNode);
-                graphBoardScene_->update(); // what is the use of update..
             }
         }
         for (auto&& node : parentNodes) {
@@ -389,7 +387,6 @@ namespace View
                 if (verterxGUIParents) {
                     NodeGUI* nodeGUIParent = mapGraphsNodesGUI_[graphViewer_->getCurrentGraph()->getName()][node->getName()];
                     verterxGUIParents->updateGUI(nodeGUIParent, nodeGUI);
-                    graphBoardScene_->update(); // what is the use of update...
                 }
             }
         }
@@ -398,7 +395,7 @@ namespace View
     void GraphViewerGUI::verifyNodePos() {
         bool goodPos = false;
         int countOfLoop = 0;
-        //infinite loop if there is no place
+
         while (!goodPos) {
             int direction = std::rand() % 3; // 0 = left, 1 = right, 2 = up, default = down
             switch (direction) {
@@ -432,7 +429,7 @@ namespace View
             }
             countOfLoop++;
             if (countOfLoop == 100) {
-                // throw error, hopefully it will never happen
+                return; // avoid infinite loop because the program could not find a good position.
             }
         }
     }

@@ -18,20 +18,19 @@ namespace View
 		if (change == QGraphicsItem::ItemSelectedChange) {
 			if (value.toBool()) { // is selected
 				brush_ = QBrush(Qt::yellow);
-				update();
 				emit nodeSelected(this);
 			}
 			else { // isNotSelected check if amount of selected Node > 2
 				if (brush_.color() != Qt::red) {
 					brush_ = QBrush(Qt::darkCyan);
-					update();
+					emit nodeReleased(this, this->x(), this->y()); // emit signal when we move a lot of node
 				}
 			}
 		}
 		return QGraphicsItem::itemChange(change, value);
 	}
 
-	void NodeGUI::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+	void NodeGUI::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) { // emit signal that update position of node and vertex when we move a single node
 		QGraphicsItem::mouseReleaseEvent(event);
 		emit nodeReleased(this, this->x(), this->y());
 	}
