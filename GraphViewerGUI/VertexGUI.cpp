@@ -54,7 +54,7 @@ namespace View {
 		firstLineForArrowGUI->setPen(vertexPen);
 		secondLineForArrowGUI->setPen(vertexPen);
 
-		if (firstLineForArrowGUI) { delete firstLineForArrowGUI_; }
+		if (firstLineForArrowGUI_) { delete firstLineForArrowGUI_; }
 		if (secondLineForArrowGUI_) { delete secondLineForArrowGUI_; }
 
 		firstLineForArrowGUI_ = firstLineForArrowGUI;
