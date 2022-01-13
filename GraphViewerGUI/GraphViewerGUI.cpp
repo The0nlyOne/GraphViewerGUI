@@ -39,7 +39,10 @@ namespace View
         QObject::connect(ui.redoButton, SIGNAL(clicked()), this, SLOT(redoCmd()));
         QObject::connect(ui.saveFileButton, SIGNAL(clicked()), this, SLOT(saveFileCmd()));
         QObject::connect(ui.openFileButton, SIGNAL(clicked()), this, SLOT(openFileCmd()));
-        QObject::connect(ui.zoomHSlider, SIGNAL(valueChanged(int)), this, SLOT(zoomView(int)));
+        QObject::connect(ui.zoomHSlider, SIGNAL(valueChanged(int)), this, SLOT(zoomSlideView(int)));
+        QObject::connect(ui.zoomPushButton, SIGNAL(clicked()), this, SLOT(zoomView()));
+        QObject::connect(ui.dezoomPushButton, SIGNAL(clicked()), this, SLOT(dezoomView()));
+
 
         // listConnection
         QObject::connect(ui.graphsListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
@@ -637,8 +640,17 @@ namespace View
         fileManager_->loadFile(filename.toStdString());
     }
 
-    void GraphViewerGUI::zoomView(int value) {
+    void GraphViewerGUI::zoomSlideView(int value) {
         previousZoomValue_ < value ? graphBoardView_->scale(1.05, 1.05) : graphBoardView_->scale(1 / 1.05, 1 / 1.05);
         previousZoomValue_ = value;
     }
+
+    void GraphViewerGUI::zoomView() {
+        graphBoardView_->scale(1.2, 1.2);
+    }
+
+    void GraphViewerGUI::dezoomView() {
+        graphBoardView_->scale(1 / 1.2, 1 / 1.2);
+    }
+
 }

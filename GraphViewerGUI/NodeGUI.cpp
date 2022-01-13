@@ -23,8 +23,8 @@ namespace View
 			else { // isNotSelected check if amount of selected Node > 2
 				if (brush_.color() != Qt::red) {
 					brush_ = QBrush(Qt::darkCyan);
-					emit nodeReleased(this, this->x(), this->y()); // emit signal when we move a lot of node
 				}
+				emit nodeReleased(this, this->x(), this->y()); // emit signal when we move a lot of node
 			}
 		}
 		return QGraphicsItem::itemChange(change, value);

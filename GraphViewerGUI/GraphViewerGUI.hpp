@@ -70,7 +70,9 @@ namespace View
         void saveFileCmd();
         void openFileCmd();
 
-        void zoomView(int value);
+        void zoomSlideView(int value);
+        void zoomView();
+        void dezoomView();
 
     private:
         Ui::GraphViewerGUIClass ui;
