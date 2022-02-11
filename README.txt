@@ -1,5 +1,7 @@
 Graph Viewer Tool - Made by Nde Tsakou, Homer
 
+Used C++ and Qt
+
 Disclaimer:
 I did this project in 2 weeks during summer's vacation. 
 I had to stop  developing it because school started and I became too busy.
