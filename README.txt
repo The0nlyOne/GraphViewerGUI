@@ -2,6 +2,8 @@ Graph Viewer Tool - Made by Nde Tsakou, Homer
 
 Used C++ and Qt
 
+You can download the GraphViewer64Bits.zip file in the repository and extract it to use the app.
+
 Disclaimer:
 I did this project in 2 weeks during summer's vacation. 
 I had to stop  developing it because school started and I became too busy.
